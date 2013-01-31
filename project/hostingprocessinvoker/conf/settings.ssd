@@ -1,0 +1,8 @@
+{
+	version = "1.0"
+	, mapped_folders = [
+	]
+	, configuration_server {
+		port_number = "4444"
+	}
+}
