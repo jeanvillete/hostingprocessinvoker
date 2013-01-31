@@ -1,0 +1,31 @@
+// project name: hostingprocessinvoker
+
+// hosting process invoker ssd configuration file structure
+{
+	mapped-folders = [
+		"C:/opt/hpi/hosting/folder1"
+		, "C:/opt/hpi/hosting/folder2"
+		, "C:/opt/hpi/hosting/folder3"
+	]
+	, configuration-server {
+		port-number = "4444"
+	}
+}
+
+
+
+// hosting process invoker simple example ssd file structure
+{
+	description = ""
+	, executables = [
+		{
+			canonical_path = "C:/opt/app/bin/file.sh" // the folder canonical path
+			, parameters = [
+				{ key = "parameter key 1", value = "parameter value 1"}
+				, { key = "parameter key 2", value = "parameter value 2"}
+				, { key = "parameter key 3", value = "parameter value 3"}
+				, { key = "parameter key n", value = "parameter value n"}
+			]
+		}
+	]
+}
