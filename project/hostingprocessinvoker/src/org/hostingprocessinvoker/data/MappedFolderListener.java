@@ -5,6 +5,8 @@ package org.hostingprocessinvoker.data;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.hostingprocessinvoker.data.factoy.LoadFactoryManager;
 import org.hostingprocessinvoker.exception.HostingProcessInvokerException;
@@ -18,12 +20,16 @@ import br.com.datawatcher.interfaces.DataChangeable;
  *
  */
 public class MappedFolderListener extends LoadFactoryManager implements DataChangeable {
+	
+	private static final Logger log = Logger.getLogger(MappedFolderListener.class.getName());
 
 	@Override
 	public void delete(SimpleRegister oldFile) {
 		try {
 			FileWrapper invokerFile = (FileWrapper) oldFile;
 			this.removeInvoker(new File(invokerFile.getFile().getCanonicalPath()));
+			
+			log.log(Level.INFO, "An invokerFile has been removed. File : " + invokerFile.getFile().getName());
 		} catch (IOException e) {
 			throw new HostingProcessInvokerException(e);
 		}
@@ -34,6 +40,8 @@ public class MappedFolderListener extends LoadFactoryManager implements DataChan
 		try {
 			FileWrapper invokerFile = (FileWrapper) newFile;
 			this.addInvokerFile(new File(invokerFile.getFile().getCanonicalPath()));
+			
+			log.log(Level.INFO, "A new invokerFile has been added. File : " + invokerFile.getFile().getName());
 		} catch (IOException e) {
 			throw new HostingProcessInvokerException(e);
 		}
@@ -41,5 +49,6 @@ public class MappedFolderListener extends LoadFactoryManager implements DataChan
 
 	@Override
 	public void update(SimpleRegister oldFile, SimpleRegister newFile) {
+		throw new HostingProcessInvokerException("Unimplemented method!");
 	}
 }

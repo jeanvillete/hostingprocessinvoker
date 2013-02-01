@@ -5,6 +5,8 @@ package org.hostingprocessinvoker.data;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.hostingprocessinvoker.common.Constants;
 import org.hostingprocessinvoker.data.factoy.LoadFactoryManager;
@@ -24,11 +26,18 @@ import br.com.datawatcher.entity.Listener;
  */
 public class InvokerDataLoader extends LoadFactoryManager {
 	
+	private static final Logger log = Logger.getLogger(InvokerDataLoader.class.getName());
+	
 	public void startup(File currentDirectory) {
+		log.log(Level.INFO, "Initializing HPI startup loader.");
+		
 		try {
 			// first load to invokers SSD files
 			DataWatcher dataWatcher = new DataWatcher();
 			File settingsFile = new File(currentDirectory, Constants.CONFIGURATIONS_FILE_ADDRESS);
+			
+			log.log(Level.INFO, "Looking for data settings at: " + settingsFile.getCanonicalPath());
+			
 			SSDContextManager ssdCtx = SSDContextManager.build(settingsFile);
 			SSDRootObject root = ssdCtx.getRootObject();
 			SSDObjectArray ssdMappedFolders = root.getArray(Constants.CONFIGURATIONS_MAPPED_FOLDER);
@@ -42,11 +51,16 @@ public class InvokerDataLoader extends LoadFactoryManager {
 				FolderMapping folder = new FolderMapping();
 				folder.setIdentifier(Constants.DATA_WATCHER_FOLDER_MAPPING + i);
 				folder.setCanonicalPath(mappedFolder.getCanonicalPath());
+				
+				log.log(Level.FINE, "Mapping folder to DataWatcher. Folder: " + mappedFolder.getCanonicalPath());
+				
 				folder.setRegexFilter(Constants.REGEX_FILE);
 				folder.setCheckChange(new CheckChange(Constants.DATA_WATCHER_CRON_EXPRESSION));
 				folder.addListeners(new Listener(MappedFolderListener.class.getName()));
 				dataWatcher.addMapping(folder);
 			}
+			
+			log.log(Level.FINE, "Starting DataWatcher.");
 			dataWatcher.start();
 		} catch (Exception e) {
 			throw new HostingProcessInvokerException(e);
