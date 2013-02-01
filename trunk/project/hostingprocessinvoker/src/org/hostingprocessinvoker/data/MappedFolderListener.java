@@ -4,9 +4,12 @@
 package org.hostingprocessinvoker.data;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.hostingprocessinvoker.data.factoy.LoadFactoryManager;
+import org.hostingprocessinvoker.exception.HostingProcessInvokerException;
 
+import br.com.datawatcher.entity.FileWrapper;
 import br.com.datawatcher.entity.SimpleRegister;
 import br.com.datawatcher.interfaces.DataChangeable;
 
@@ -18,14 +21,22 @@ public class MappedFolderListener extends LoadFactoryManager implements DataChan
 
 	@Override
 	public void delete(SimpleRegister oldFile) {
-		br.com.datawatcher.entity.File invokerFile = (br.com.datawatcher.entity.File) oldFile;
-		this.removeInvoker(new File(invokerFile.getName()));
+		try {
+			FileWrapper invokerFile = (FileWrapper) oldFile;
+			this.removeInvoker(new File(invokerFile.getFile().getCanonicalPath()));
+		} catch (IOException e) {
+			throw new HostingProcessInvokerException(e);
+		}
 	}
 
 	@Override
 	public void insert(SimpleRegister newFile) {
-		br.com.datawatcher.entity.File invokerFile = (br.com.datawatcher.entity.File) newFile;
-		this.addInvokerFile(new File(invokerFile.getName()));
+		try {
+			FileWrapper invokerFile = (FileWrapper) newFile;
+			this.addInvokerFile(new File(invokerFile.getFile().getCanonicalPath()));
+		} catch (IOException e) {
+			throw new HostingProcessInvokerException(e);
+		}
 	}
 
 	@Override

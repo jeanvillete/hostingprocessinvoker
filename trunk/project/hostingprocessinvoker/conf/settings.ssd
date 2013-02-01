@@ -1,6 +1,7 @@
 {
 	version = "1.0"
 	, mapped_folders = [
+		"C:\\TEMP\\datawatcher\\listened"
 	]
 	, configuration_server {
 		port_number = "4444"
