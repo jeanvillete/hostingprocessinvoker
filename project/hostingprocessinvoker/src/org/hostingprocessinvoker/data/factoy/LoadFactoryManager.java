@@ -26,7 +26,7 @@ public abstract class LoadFactoryManager {
 	 * @param invokerFile
 	 */
 	public void addInvokerFile(File invokerFile) {
-		if (invokerFile == null || invokerFile.isFile()) {
+		if (invokerFile == null || !invokerFile.isFile()) {
 			throw new IllegalArgumentException("The invokerFile is null or isn't a valid file.");
 		}
 		
