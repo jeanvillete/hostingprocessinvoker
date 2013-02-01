@@ -4,6 +4,8 @@
 package org.hostingprocessinvoker.data.factoy;
 
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.com.tatu.helper.FileHelper;
 import org.hostingprocessinvoker.common.Constants;
@@ -21,6 +23,8 @@ import org.simplestructruedata.entities.SSDObjectNode;
  */
 public abstract class LoadFactoryManager {
 
+	private static final Logger log = Logger.getLogger(LoadFactoryManager.class.getName());
+	
 	/**
 	 * 
 	 * @param invokerFile
@@ -29,6 +33,8 @@ public abstract class LoadFactoryManager {
 		if (invokerFile == null || !invokerFile.isFile()) {
 			throw new IllegalArgumentException("The invokerFile is null or isn't a valid file.");
 		}
+		
+		log.log(Level.FINE, "Adding a new invokerFile: " + invokerFile.getName());
 		
 		SSDContextManager ssdCtx = SSDContextManager.build(invokerFile);
 		SSDRootObject root = ssdCtx.getRootObject();
@@ -64,6 +70,8 @@ public abstract class LoadFactoryManager {
 		if (invokerFile == null || invokerFile.isFile()) {
 			throw new IllegalArgumentException("The invokerFile is null or isn't a valid file.");
 		}
+		
+		log.log(Level.FINE, "Removing an invokerFile: " + invokerFile.getName());
 		
 		InvokerFactory.getInstance().removeInvoker(FileHelper.removeExtension(invokerFile.getName()));
 	}

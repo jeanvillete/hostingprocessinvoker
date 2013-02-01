@@ -1,3 +1,12 @@
+---- MANDATORY PARAMETERS TO JVM ----
+// $JAVA_HOME\bin\java -jar hpi.jar -Dhpi.base=$CURRENT_DIRECTORY
+
+-Dhpi.base="C:\workspaces\jb\indigo\hostingprocessinvoker\hostingprocessinvoker"
+-Djava.util.logging.config.file="C:\workspaces\jb\indigo\hostingprocessinvoker\hostingprocessinvoker\conf\logging.properties"
+-Dlog4j.configuration="file:C:\workspaces\jb\indigo\hostingprocessinvoker\hostingprocessinvoker\conf\log4j.properties"
+-------------------------------------
+
+
 // project name: hostingprocessinvoker
 
 // hosting process invoker ssd configuration file structure
