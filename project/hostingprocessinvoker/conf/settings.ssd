@@ -1,9 +1,12 @@
 {
 	version = "1.0"
 	, mapped_folders = [
-		"C:\\TEMP\\datawatcher\\listened"
+		"C:\\temp\\datawatcher\\mappedfolder"
 	]
 	, configuration_server {
 		port_number = "4444"
+		, session_manager = {
+			keep_session_alive = "3000"
+		}
 	}
 }
