@@ -8,7 +8,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.com.tatu.helper.parameter.Parameter;
-import org.hpi.entities.HPISession;
+import org.hpi.entities.User;
+import org.hpi.exception.HPISessionException;
 
 /**
  * @author Jean Villete
@@ -65,42 +66,32 @@ public class HPISessionManager extends Thread {
 		}
 	}
 	
-	public void newSession(HPISession session) {
-		Parameter.check(session).notNull();
+	public HPISession newSession(User user, String remoteAddress) {
+		HPISession session = new HPISession(user, remoteAddress);
 		this.listAliveSessions.add(new AliveSession(session));
+		return session;
 	}
 	
-	public HPISession getSession(String session_id) {
-		for (int i = 0; i < this.listAliveSessions.size(); i++) {
-			HPISessionManager.AliveSession aliveSession = this.listAliveSessions.get(i);
-			if (aliveSession.getSession().getSession_id().equals(session_id)) {
-				return aliveSession.getSession();
-			}
-		}
-		return null;
-	}
-	
-	public void updateSession(String session_id) {
+	public HPISession updateSession(String session_id) throws HPISessionException {
 		Parameter.check(session_id).notNull().notEmpty();
 		for (HPISessionManager.AliveSession aliveSession : this.listAliveSessions) {
 			if (aliveSession.getSession().getSession_id().equals(session_id)) {
 				aliveSession.updateSessionDate();
-				return;
+				return aliveSession.getSession();
 			}
 		}
-		throw new IllegalArgumentException("Session has not been updated. There's no alive session to this session_id: " + session_id);
+		throw new HPISessionException("Session has not been updated. There's no alive session to this session_id: " + session_id);
 	}
 	
-	public void deleteSession(String session_id) {
+	public boolean deleteSession(String session_id) {
 		Parameter.check(session_id).notNull().notEmpty();
 		for (int i = 0; i < this.listAliveSessions.size(); i++) {
 			HPISessionManager.AliveSession aliveSession = this.listAliveSessions.get(i);
 			if (aliveSession.getSession().getSession_id().equals(session_id)) {
-				this.listAliveSessions.remove(i);
-				return;
+				return this.listAliveSessions.remove(i) != null;
 			}
 		}
-		throw new IllegalArgumentException("Session has not been deleted. There's no alive session to this session_id: " + session_id);
+		return false;
 	}
 	
 	private class AliveSession {

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.hpi.protocol.request;
+package org.hpi.protocol.operation;
 
 /**
  * @author Jean Villete

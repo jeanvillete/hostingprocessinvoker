@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.hpi.protocol.request;
+package org.hpi.protocol.operation;
 
 import org.hpi.protocol.HpiProtocolConstants;
 import org.simplestructruedata.data.SSDContextManager;
@@ -12,14 +12,14 @@ import org.simplestructruedata.entities.SSDObjectLeaf;
  * @author Jean Villete
  *
  */
-public class ListInvokersOperation extends Operation {
+public class LogoffOperation extends Operation {
 
-	public static final String				LIST_INVOKERS = "list_invokers";
+	public static final String				DO_LOGOFF = "do_logoff";
 	
 	private String							sessionId;
 	
-	public ListInvokersOperation(String sessionId) {
-		super(LIST_INVOKERS);
+	public LogoffOperation(String sessionId) {
+		super(DO_LOGOFF);
 		this.sessionId = sessionId;
 	}
 

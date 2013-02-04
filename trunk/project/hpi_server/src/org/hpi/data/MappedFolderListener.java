@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.hpi.data.factoy.LoadFactoryManager;
-import org.hpi.exception.HPIException;
+import org.hpi.exception.HPIRuntimeException;
 
 import br.com.datawatcher.entity.FileWrapper;
 import br.com.datawatcher.entity.SimpleRegister;
@@ -31,7 +31,7 @@ public class MappedFolderListener extends LoadFactoryManager implements DataChan
 			
 			log.log(Level.INFO, "An invokerFile has been removed. File : " + invokerFile.getFile().getName());
 		} catch (IOException e) {
-			throw new HPIException(e);
+			throw new HPIRuntimeException(e);
 		}
 	}
 
@@ -43,12 +43,12 @@ public class MappedFolderListener extends LoadFactoryManager implements DataChan
 			
 			log.log(Level.INFO, "A new invokerFile has been added. File : " + invokerFile.getFile().getName());
 		} catch (IOException e) {
-			throw new HPIException(e);
+			throw new HPIRuntimeException(e);
 		}
 	}
 
 	@Override
 	public void update(SimpleRegister oldFile, SimpleRegister newFile) {
-		throw new HPIException("Unimplemented method!");
+		throw new HPIRuntimeException("Unimplemented method!");
 	}
 }

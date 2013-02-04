@@ -11,6 +11,9 @@ import org.simplestructruedata.entities.SSDObjectNode;
 
 public abstract class Response {
 
+	public static final String	STATUS_CODE_SUCCESS = "0";
+	public static final String	STATUS_CODE_FAIL = "1";
+	
 	private String				goal;
 	private String				statusCode;
 	private String				message;
@@ -36,6 +39,8 @@ public abstract class Response {
 		} else if (goal.equals(LoginResponse.LOGIN)) {
 			String session_id = root.getNode(HpiProtocolConstants.RESPONSE_LOGIN).getLeaf(HpiProtocolConstants.RESPONSE_LOGIN_SESSION_ID).getValue();
 			return new LoginResponse(statusCode, message, session_id);
+		} else if (goal.equals(LogoffResponse.LOGOFF)) {
+			return new LogoffResponse(statusCode, message);
 		} else if (goal.equals(ListInvokersResponse.LIST_INVOKERS)) {
 			List<String> listInvokers = new ArrayList<String>();
 			for (int i = 0; i < root.getArray(HpiProtocolConstants.RESPONSE_INVOKERS).getSize(); i++) {

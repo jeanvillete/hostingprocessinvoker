@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 import org.hpi.common.HPIConstants;
 import org.hpi.data.factoy.LoadFactoryManager;
 import org.hpi.entities.User;
-import org.hpi.exception.HPIException;
+import org.hpi.exception.HPIRuntimeException;
 import org.simplestructruedata.data.SSDContextManager.SSDRootObject;
 import org.simplestructruedata.entities.SSDObjectArray;
 import org.simplestructruedata.entities.SSDObjectNode;
@@ -69,7 +69,7 @@ public class InvokerDataLoader extends LoadFactoryManager {
 			log.log(Level.FINE, "Starting DataWatcher.");
 			dataWatcher.start();
 		} catch (Exception e) {
-			throw new HPIException(e);
+			throw new HPIRuntimeException(e);
 		}
 	}
 	
