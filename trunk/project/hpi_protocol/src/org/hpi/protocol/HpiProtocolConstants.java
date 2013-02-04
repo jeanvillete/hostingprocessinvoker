@@ -13,6 +13,7 @@ public interface HpiProtocolConstants {
 	
 	// Constants to Operation messages
 	String					OPERATION_TITLE = "operation_name";
+	String					OPERATION_SESSION_ID = "session_id";
 	String					OPERATION_DO_LOGIN_LOGIN = "login";
 	String					OPERATION_DO_LOGIN_NICKNAME = "nickname";
 	String					OPERATION_DO_LOGIN_PASSPHRASE = "passphrase";

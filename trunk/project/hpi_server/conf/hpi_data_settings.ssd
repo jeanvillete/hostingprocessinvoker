@@ -1,7 +1,7 @@
 {
 	version = "1.0"
 	, mapped_folders = [
-		"C:\\temp\\datawatcher\\mappedfolder"
+		"C:\\temp\\hpi\\mappedfolder"
 	]
 	, configuration_server {
 		port_number = "4444"
@@ -9,4 +9,8 @@
 			keep_session_alive = "3000"
 		}
 	}
+	, users = [
+		{ nickname = "admin", passphrase = "admin"}
+		, { nickname = "jean", passphrase = "jbadm"}
+	]
 }

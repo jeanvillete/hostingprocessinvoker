@@ -8,12 +8,12 @@ import java.net.ServerSocket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.hpi.common.Constants;
+import org.hpi.common.HPIConstants;
 import org.simplestructruedata.data.SSDContextManager.SSDRootObject;
 import org.simplestructruedata.entities.SSDObjectNode;
 
 /**
- * @author carrefour
+ * @author Jean Villete
  *
  */
 public class ServerBridge {
@@ -28,10 +28,10 @@ public class ServerBridge {
 		log.log(Level.INFO, "Turning up the ServerBridge.");
 		
 		// first load to invokers SSD files
-		SSDObjectNode ssdConfiguration = ssdSettingsData.getNode(Constants.CONFIGURATIONS_CONFIG_SERVER);
+		SSDObjectNode ssdConfiguration = ssdSettingsData.getNode(HPIConstants.CONFIGURATIONS_CONFIG_SERVER);
 		
 		// instantiating and loading the server socket to new thread manager
-		int portNumber = Integer.parseInt(ssdConfiguration.getLeaf(Constants.CONFIGURATIONS_PORT_NUMBER).getValue());
+		int portNumber = Integer.parseInt(ssdConfiguration.getLeaf(HPIConstants.CONFIGURATIONS_PORT_NUMBER).getValue());
 		if (portNumber <= 0) {
 			throw new IllegalStateException("The port number must be a valid number greater than 0.");
 		}
@@ -61,7 +61,7 @@ public class ServerBridge {
 			try {
 				boolean listening = true;
 				while (listening) {
-					new HostingInvokerProtocol(this.serverSocket.accept()).start();
+					new HPIServerImplProtocol(this.serverSocket.accept()).start();
 				}
 			} catch (IOException e) {
 				throw new RuntimeException(e);

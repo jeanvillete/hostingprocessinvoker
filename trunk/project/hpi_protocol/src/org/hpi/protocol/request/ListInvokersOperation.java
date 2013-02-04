@@ -12,16 +12,14 @@ import org.simplestructruedata.entities.SSDObjectLeaf;
  * @author Jean Villete
  *
  */
-public class ExecuteInvokerOperation extends Operation {
+public class ListInvokersOperation extends Operation {
 
-	public static final String				EXECUTE_INVOKER = "execute_invoker";
+	public static final String				LIST_INVOKERS = "list_invokers";
 	
-	private String							invokerId;
 	private String							sessionId;
 	
-	public ExecuteInvokerOperation(String invokerId, String sessionId) {
-		super(EXECUTE_INVOKER);
-		this.invokerId = invokerId;
+	public ListInvokersOperation(String sessionId) {
+		super(LIST_INVOKERS);
 		this.sessionId = sessionId;
 	}
 
@@ -29,18 +27,14 @@ public class ExecuteInvokerOperation extends Operation {
 	public String toString() {
 		SSDContextManager ssdCtx = this.getSSDCtx();
 		SSDRootObject root = ssdCtx.getRootObject();
-		root.addAttribute(new SSDObjectLeaf(HpiProtocolConstants.OPERATION_EXECUTE_INVOKER_ID_INVOKER, this.invokerId));
 		root.addAttribute(new SSDObjectLeaf(HpiProtocolConstants.OPERATION_SESSION_ID, this.sessionId));
 		
 		return ssdCtx.toString();
 	}
 
 	// GETTERS AND SETTERS //
-	public String getInvokerId() {
-		return invokerId;
-	}
-
 	public String getSessionId() {
 		return sessionId;
 	}
+	
 }

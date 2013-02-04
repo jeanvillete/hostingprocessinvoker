@@ -8,23 +8,23 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * @author villjea
+ * @author Jean Villete
  *
  */
-public class HostingProcessInvokerException extends RuntimeException {
+public class HPIException extends RuntimeException {
 	
 	private static final long serialVersionUID = -8622467051630489773L;
 	
 	private List<String>                messages = new ArrayList<String>();
 	
-	public HostingProcessInvokerException() {
+	public HPIException() {
 	}
 	
-	public HostingProcessInvokerException(String message) {
+	public HPIException(String message) {
 		this.appendMessage(message);
 	}
 	
-	public HostingProcessInvokerException(Exception e) {
+	public HPIException(Exception e) {
 		super(e.getMessage(), e);
 	}
 	
