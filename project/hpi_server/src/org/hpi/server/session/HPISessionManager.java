@@ -16,9 +16,10 @@ import org.hpi.entities.HPISession;
  */
 public class HPISessionManager extends Thread {
 
+	private static HPISessionManager						INSTANCE;
+	
 	private long											keepSessionAlive; // miliseconds value
 	private List<HPISessionManager.AliveSession>			listAliveSessions = new ArrayList<HPISessionManager.AliveSession>();
-	private static HPISessionManager						INSTANCE;
 	
 	private HPISessionManager(int keepSessionAlive) {
 		if (keepSessionAlive < 1) {

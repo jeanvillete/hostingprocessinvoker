@@ -1,7 +1,7 @@
 {
 	version = "1.0"
 	, mapped_folders = [
-		"C:\\temp\\hpi\\mappedfolder"
+		"C:\\TEMP\\hpi\\mappedfolder"
 	]
 	, configuration_server {
 		port_number = "4444"
