@@ -1,4 +1,4 @@
-package org.hpi.protocol.request;
+package org.hpi.protocol.operation;
 
 import org.hpi.protocol.HpiProtocolConstants;
 import org.simplestructruedata.data.SSDContextManager;
@@ -27,6 +27,8 @@ public abstract class Operation {
 			String nickname = login.getLeaf(HpiProtocolConstants.OPERATION_DO_LOGIN_NICKNAME).getValue();
 			String passphrase = login.getLeaf(HpiProtocolConstants.OPERATION_DO_LOGIN_PASSPHRASE).getValue();
 			return new LoginOperation(nickname, passphrase);
+		} else if (operationTitle.equals(LogoffOperation.DO_LOGOFF)) {
+			return new LogoffOperation(root.getLeaf(HpiProtocolConstants.OPERATION_SESSION_ID).getValue());
 		} else if (operationTitle.equals(ListInvokersOperation.LIST_INVOKERS)) {
 			return new ListInvokersOperation(root.getLeaf(HpiProtocolConstants.OPERATION_SESSION_ID).getValue());
 		} else if (operationTitle.equals(ExecuteInvokerOperation.EXECUTE_INVOKER)) {

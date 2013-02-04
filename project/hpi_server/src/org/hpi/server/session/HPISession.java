@@ -1,9 +1,10 @@
 /**
  * 
  */
-package org.hpi.entities;
+package org.hpi.server.session;
 
 import org.com.tatu.helper.parameter.Parameter;
+import org.hpi.entities.User;
 
 /**
  * @author Jean Villete
@@ -15,8 +16,7 @@ public class HPISession {
 	private String				remoteAddress;
 	private String				session_id;
 	
-	public HPISession(User user, String	remoteAddress) {
-		super();
+	HPISession(User user, String remoteAddress) {
 		Parameter.check(user).notNull();
 		Parameter.check(remoteAddress).notNull().notEmpty();
 		

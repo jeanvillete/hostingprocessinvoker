@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.hpi.protocol.request;
+package org.hpi.protocol.operation;
 
 import org.hpi.protocol.HpiProtocolConstants;
 import org.simplestructruedata.data.SSDContextManager;

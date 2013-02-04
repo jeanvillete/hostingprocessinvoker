@@ -11,20 +11,20 @@ import java.util.List;
  * @author Jean Villete
  *
  */
-public class HPIException extends Exception {
+public class HPIRuntimeException extends RuntimeException {
 	
-	private static final long serialVersionUID = -8116860414223610430L;
+	private static final long serialVersionUID = 5127528292122947329L;
 	
 	private List<String>                messages = new ArrayList<String>();
 	
-	public HPIException() {
+	public HPIRuntimeException() {
 	}
 	
-	public HPIException(String message) {
+	public HPIRuntimeException(String message) {
 		this.appendMessage(message);
 	}
 	
-	public HPIException(Exception e) {
+	public HPIRuntimeException(Exception e) {
 		super(e.getMessage(), e);
 	}
 	
