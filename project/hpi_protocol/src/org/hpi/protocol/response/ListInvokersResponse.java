@@ -24,8 +24,10 @@ public class ListInvokersResponse extends Response {
 		SSDContextManager ssdCtx = this.getSSDCtx();
 		SSDRootObject root = ssdCtx.getRootObject();
 		SSDObjectArray invokers = new SSDObjectArray(HpiProtocolConstants.RESPONSE_INVOKERS);
-		for (String invoker : this.listInvokers) {
-			invokers.addElement(new SSDObjectLeaf(invoker, invoker));
+		if (this.listInvokers != null) {
+			for (String invoker : this.listInvokers) {
+				invokers.addElement(new SSDObjectLeaf(invoker, invoker));
+			}
 		}
 		root.addAttribute(invokers);
 		

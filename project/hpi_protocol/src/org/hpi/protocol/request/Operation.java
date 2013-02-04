@@ -20,16 +20,21 @@ public abstract class Operation {
 		
 		// getting the operation title to infer what is the operation to perform
 		String operationTitle = root.getLeaf(HpiProtocolConstants.OPERATION_TITLE).getValue();
+		
+		// checking what the operation implemention it's being requesting, and returning it
 		if (operationTitle.equals(LoginOperation.DO_LOGIN)) {
 			SSDObjectNode login = root.getNode(HpiProtocolConstants.OPERATION_DO_LOGIN_LOGIN);
 			String nickname = login.getLeaf(HpiProtocolConstants.OPERATION_DO_LOGIN_NICKNAME).getValue();
 			String passphrase = login.getLeaf(HpiProtocolConstants.OPERATION_DO_LOGIN_PASSPHRASE).getValue();
-			
 			return new LoginOperation(nickname, passphrase);
-		} else if (operationTitle.equals(ListInvokerOperation.LIST_INVOKERS)) {
-			return new ListInvokerOperation();
+		} else if (operationTitle.equals(ListInvokersOperation.LIST_INVOKERS)) {
+			return new ListInvokersOperation(root.getLeaf(HpiProtocolConstants.OPERATION_SESSION_ID).getValue());
 		} else if (operationTitle.equals(ExecuteInvokerOperation.EXECUTE_INVOKER)) {
-			return new ExecuteInvokerOperation(root.getLeaf(HpiProtocolConstants.OPERATION_EXECUTE_INVOKER_ID_INVOKER).getValue());
+			String sessionId = root.getLeaf(HpiProtocolConstants.OPERATION_SESSION_ID).getValue();
+			String invokerId = root.getLeaf(HpiProtocolConstants.OPERATION_EXECUTE_INVOKER_ID_INVOKER).getValue();
+			return new ExecuteInvokerOperation(invokerId, sessionId);
+		} else if (operationTitle.equals(ShutdownServerOperation.SHUTDOWN_SERVER)) {
+			return new ShutdownServerOperation();
 		} else throw new IllegalStateException("Unknow the current value of operationTitle. operationTitle: " + operationTitle);
 	}
 

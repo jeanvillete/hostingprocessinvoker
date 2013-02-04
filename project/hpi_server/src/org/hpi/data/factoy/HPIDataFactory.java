@@ -5,10 +5,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.hpi.entities.Invoker;
+import org.hpi.entities.User;
 
-public class InvokerFactory {
+public class HPIDataFactory {
 
-	private static InvokerFactory					INSTANCE;
+	private static HPIDataFactory					INSTANCE;
 	
 	/**
 	 * String: invoker.id
@@ -16,13 +17,19 @@ public class InvokerFactory {
 	 */
 	private Map<String, Invoker>					invokers = new HashMap<String, Invoker>();
 	
+	/**
+	 * String: user.nickname
+	 * User: user
+	 */
+	private Map<String, User>						users = new HashMap<String, User>();
+	
 	// singleton pattern
-	private InvokerFactory() {
+	private HPIDataFactory() {
 	}
 	
-	public static InvokerFactory getInstance() {
+	public static HPIDataFactory getInstance() {
 		if (INSTANCE == null) {
-			INSTANCE = new InvokerFactory();
+			INSTANCE = new HPIDataFactory();
 		}
 		return INSTANCE;
 	}
@@ -35,9 +42,20 @@ public class InvokerFactory {
 		this.invokers.remove(invokerId);
 	}
 	
+	void addUser(User user) {
+		this.users.put(user.getNickname(), user);
+	}
+	
 	// GETTERS AND SETTERS //
 	public Collection<Invoker> getInvokers() {
 		return this.invokers.values();
 	}
 	
+	public User getUser(String nickname) {
+		return this.users.get(nickname);
+	}
+	
+	public Collection<User> getUsers() {
+		return this.users.values();
+	}
 }

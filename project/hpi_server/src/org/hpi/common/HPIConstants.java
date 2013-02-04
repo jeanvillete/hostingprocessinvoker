@@ -1,12 +1,15 @@
 package org.hpi.common;
 
-public interface Constants {
+public interface HPIConstants {
 	
 	String 					SSD_EXTENSION = ".ssd";
 	
-	String					CONFIGURATIONS_FILE = "settings" + SSD_EXTENSION;
+	String					CONFIGURATIONS_FILE = "hpi_data_settings" + SSD_EXTENSION;
 	String					CONFIGURATIONS_FILE_ADDRESS = "conf" + System.getProperty("file.separator") + CONFIGURATIONS_FILE;
 	String					CONFIGURATIONS_MAPPED_FOLDER = "mapped_folders";
+	String					CONFIGURATIONS_USERS = "users";
+	String					CONFIGURATIONS_USERS_NICKNAME = "nickname";
+	String					CONFIGURATIONS_USERS_PASSPHRASE = "passphrase";
 	String					CONFIGURATIONS_CONFIG_SERVER = "configuration_server";
 	String					CONFIGURATIONS_PORT_NUMBER = "port_number";
 	String					CONFIGURATIONS_SESSION_MANAGER = "session_manager";

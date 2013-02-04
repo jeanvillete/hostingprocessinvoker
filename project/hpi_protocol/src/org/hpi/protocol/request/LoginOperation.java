@@ -10,7 +10,7 @@ import org.simplestructruedata.entities.SSDObjectLeaf;
 import org.simplestructruedata.entities.SSDObjectNode;
 
 /**
- * @author carrefour
+ * @author Jean Villete
  *
  */
 public class LoginOperation extends Operation {

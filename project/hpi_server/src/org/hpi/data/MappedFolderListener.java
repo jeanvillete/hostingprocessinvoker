@@ -9,14 +9,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.hpi.data.factoy.LoadFactoryManager;
-import org.hpi.exception.HostingProcessInvokerException;
+import org.hpi.exception.HPIException;
 
 import br.com.datawatcher.entity.FileWrapper;
 import br.com.datawatcher.entity.SimpleRegister;
 import br.com.datawatcher.interfaces.DataChangeable;
 
 /**
- * @author villjea
+ * @author Jean Villete
  *
  */
 public class MappedFolderListener extends LoadFactoryManager implements DataChangeable {
@@ -31,7 +31,7 @@ public class MappedFolderListener extends LoadFactoryManager implements DataChan
 			
 			log.log(Level.INFO, "An invokerFile has been removed. File : " + invokerFile.getFile().getName());
 		} catch (IOException e) {
-			throw new HostingProcessInvokerException(e);
+			throw new HPIException(e);
 		}
 	}
 
@@ -43,12 +43,12 @@ public class MappedFolderListener extends LoadFactoryManager implements DataChan
 			
 			log.log(Level.INFO, "A new invokerFile has been added. File : " + invokerFile.getFile().getName());
 		} catch (IOException e) {
-			throw new HostingProcessInvokerException(e);
+			throw new HPIException(e);
 		}
 	}
 
 	@Override
 	public void update(SimpleRegister oldFile, SimpleRegister newFile) {
-		throw new HostingProcessInvokerException("Unimplemented method!");
+		throw new HPIException("Unimplemented method!");
 	}
 }
