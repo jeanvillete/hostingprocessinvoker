@@ -25,7 +25,7 @@ public class ServerBridge {
 	public ServerBridge() { }
 	
 	public void turnup(SSDRootObject ssdSettingsData) throws InterruptedException, IOException {
-		log.log(Level.INFO, "Turning up the ServerBridge.");
+		log.log(Level.INFO, "Turning the ServerBridge UP.");
 		
 		// first load to invokers SSD files
 		SSDObjectNode ssdConfiguration = ssdSettingsData.getNode(HPIConstants.CONFIGURATIONS_CONFIG_SERVER);
@@ -43,6 +43,7 @@ public class ServerBridge {
 			Thread.sleep(TIME_CHECK_SHUTDOWN);
 		}
 		
+		log.log(Level.INFO, "Turning the ServerBridge DOWN.");
 		serverSocketManager.interrupt();
 		serverSocket.close();
 	}

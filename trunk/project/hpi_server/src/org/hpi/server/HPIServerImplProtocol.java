@@ -51,10 +51,13 @@ class HPIServerImplProtocol extends Thread {
 			
 			while ((inputString = reader.readLine()) != null) {
 				Operation operation = Operation.build(inputString);
+				
 				if (operation instanceof LoginOperation) {
-					writer.println(this.doLogin((LoginOperation) operation).toString());
+					LoginResponse loginResponse = this.doLogin((LoginOperation) operation); 
+					writer.println(loginResponse.toString());
 				} else if (operation instanceof ListInvokersOperation) {
-					writer.println(this.getListInvokers((ListInvokersOperation) operation).toString());
+					ListInvokersResponse invokersResponse = this.getListInvokers((ListInvokersOperation) operation);
+					writer.println(invokersResponse.toString());
 				} else if (operation instanceof ExecuteInvokerOperation) {
 					// TODO
 				} else if (operation instanceof ShutdownServerOperation) {

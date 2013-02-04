@@ -1,6 +1,8 @@
 ---- MANDATORY PARAMETERS TO JVM ----
 // $JAVA_HOME\bin\java -jar hpi.jar -Dhpi.base=$CURRENT_DIRECTORY
 
+-current_directory "C:\workspaces\jb\indigo\hostingprocessinvoker\hostingprocessinvoker"
+
 -Dhpi.base="C:\workspaces\jb\indigo\hostingprocessinvoker\hostingprocessinvoker"
 -Djava.util.logging.config.file="C:\workspaces\jb\indigo\hostingprocessinvoker\hostingprocessinvoker\conf\logging.properties"
 -Dlog4j.configuration="file:C:\workspaces\jb\indigo\hostingprocessinvoker\hostingprocessinvoker\conf\log4j.properties"
