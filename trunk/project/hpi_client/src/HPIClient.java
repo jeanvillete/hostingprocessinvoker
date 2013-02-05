@@ -1,20 +1,16 @@
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
 import org.com.tatu.helper.GeneralsHelper;
 import org.com.tatu.helper.parameter.ConsoleParameters;
-import org.hpi.protocol.operation.ListInvokersOperation;
-import org.hpi.protocol.operation.LoginOperation;
-import org.hpi.protocol.operation.LogoffOperation;
-import org.hpi.protocol.operation.ShutdownServerOperation;
-import org.hpi.protocol.response.ListInvokersResponse;
-import org.hpi.protocol.response.LoginResponse;
-import org.hpi.protocol.response.LogoffResponse;
-import org.hpi.protocol.response.Response;
-import org.hpi.protocol.response.ServerRunningResponse;
+import org.hpi.dialogue.protocol.response.ListInvokersResponse;
+import org.hpi.dialogue.protocol.response.LoginResponse;
+import org.hpi.dialogue.protocol.response.LogoffResponse;
+import org.hpi.dialogue.protocol.response.Response;
+import org.hpi.dialogue.protocol.response.ServerRunningResponse;
+import org.hpi.dialogue.protocol.service.HPIClientProtocol;
 
 /**
  * 
@@ -50,60 +46,49 @@ public class HPIClient {
 				throw new IllegalArgumentException("The parameter -password[p] is mandatory.");
 			}
 			
-			// the server socket connection
-			managedSocket = new Socket("127.0.0.1", 4444);
-			writer = new PrintWriter(managedSocket.getOutputStream(), true);
-			input = new BufferedReader(new InputStreamReader(managedSocket.getInputStream()));
-			String inputString = null;
-
+			HPIClientProtocol clientProtocol = new HPIClientProtocol("127.0.0.1", 4444);
+			
 			// getting the first response of the target server, telling if the server is up
-			inputString = input.readLine();
-			ServerRunningResponse serverUpResponse = (ServerRunningResponse) Response.build(inputString);
-			if (serverUpResponse.getStatusCode().equals(Response.STATUS_CODE_SUCCESS)) {
+			ServerRunningResponse serverUpResponse = clientProtocol.openConnection();
+			if (serverUpResponse.getStatus().equals(Response.Status.SUCCESS)) {
 				System.out.println("Communication stablished successfully.");
 				System.out.println("Server response: " + serverUpResponse.getMessage());
-			} else if (serverUpResponse.getStatusCode().equals(Response.STATUS_CODE_FAIL)) {
+			} else if (serverUpResponse.getStatus().equals(Response.Status.FAIL)) {
 				throw new IllegalStateException("The communication couldn't be stablished. " + serverUpResponse.getMessage());
 			} else throw new IllegalStateException("Unkonw the status code server's response");
 			
 			// do login
-			writer.println(new LoginOperation(userParam, passwordParam).toString());
-			inputString = input.readLine();
-			LoginResponse loginResponse = (LoginResponse) Response.build(inputString);
-			if (loginResponse.getStatusCode().equals(Response.STATUS_CODE_SUCCESS)) {
+			LoginResponse loginResponse = clientProtocol.doLogin(userParam, passwordParam);
+			if (loginResponse.getStatus().equals(Response.Status.SUCCESS)) {
 				System.out.println("The user has been logged successfully");
-				System.out.println("The created session id was: " + loginResponse.getSession_id());
+				System.out.println("The created session id was: " + loginResponse.getSessionId());
 				System.out.println("Server response: " + loginResponse.getMessage());
-			} else if (loginResponse.getStatusCode().equals(Response.STATUS_CODE_FAIL)) {
+			} else if (loginResponse.getStatus().equals(Response.Status.FAIL)) {
 				throw new IllegalStateException(loginResponse.getMessage()); 
 			} else throw new IllegalStateException("Unkonw the server's status code response");
 			
 			// list invokers
-			writer.println(new ListInvokersOperation(loginResponse.getSession_id()).toString());
-			inputString = input.readLine();
-			ListInvokersResponse invokersResponse = (ListInvokersResponse) Response.build(inputString);
-			if (invokersResponse.getStatusCode().equals(Response.STATUS_CODE_SUCCESS)) {
+			ListInvokersResponse invokersResponse = clientProtocol.listInvokers(loginResponse.getSessionId());
+			if (invokersResponse.getStatus().equals(Response.Status.SUCCESS)) {
 				System.out.println("The ListInvokers command has been executed successfully.");
 				System.out.println("The list invokers are;");
-				for (String invoker : invokersResponse.getListInvokers()) {
+				for (String invoker : invokersResponse.getListInvokersId()) {
 					System.out.println("\t\t" + invoker);
 				}
-			} else if (invokersResponse.getStatusCode().equals(Response.STATUS_CODE_FAIL)) {
+			} else if (invokersResponse.getStatus().equals(Response.Status.FAIL)) {
 				throw new IllegalStateException(invokersResponse.getMessage());
 			} else throw new IllegalStateException("Unkonw the server's status code response");
 			
 			// do logoff
-			writer.println(new LogoffOperation(loginResponse.getSession_id()));
-			inputString = input.readLine();
-			LogoffResponse logoffResponse = (LogoffResponse) Response.build(inputString);
-			if (logoffResponse.getStatusCode().equals(Response.STATUS_CODE_SUCCESS)) {
+			LogoffResponse logoffResponse = clientProtocol.doLogoff(loginResponse.getSessionId());
+			if (logoffResponse.getStatus().equals(Response.Status.SUCCESS)) {
 				System.out.println("The logoff has been executed.");
-			} else if (logoffResponse.getStatusCode().equals(Response.STATUS_CODE_FAIL)) {
+			} else if (logoffResponse.getStatus().equals(Response.Status.FAIL)) {
 				throw new IllegalStateException(logoffResponse.getMessage());
 			} else throw new IllegalStateException("Unkonw the server's status code response");
 			
 			// invoking shutdown
-			writer.println(new ShutdownServerOperation().toString());
+//			clientProtocol.serverShutdown();
 		} catch (Exception e) {
 			System.out.println("Error: " + e.getMessage());
 		} finally {

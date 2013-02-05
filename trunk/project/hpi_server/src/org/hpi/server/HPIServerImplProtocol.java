@@ -3,29 +3,26 @@
  */
 package org.hpi.server;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.hpi.data.factoy.HPIDataFactory;
+import org.hpi.dialogue.protocol.request.ExecuteInvokerRequest;
+import org.hpi.dialogue.protocol.request.ListInvokersRequest;
+import org.hpi.dialogue.protocol.request.LoginRequest;
+import org.hpi.dialogue.protocol.request.LogoffRequest;
+import org.hpi.dialogue.protocol.request.Request;
+import org.hpi.dialogue.protocol.request.ServerShutdownRequest;
+import org.hpi.dialogue.protocol.response.ListInvokersResponse;
+import org.hpi.dialogue.protocol.response.LoginResponse;
+import org.hpi.dialogue.protocol.response.LogoffResponse;
+import org.hpi.dialogue.protocol.response.Response;
+import org.hpi.dialogue.protocol.response.ServerRunningResponse;
+import org.hpi.dialogue.protocol.service.HPIServerProtocol;
 import org.hpi.entities.Invoker;
 import org.hpi.entities.User;
 import org.hpi.exception.HPISessionException;
-import org.hpi.protocol.operation.ExecuteInvokerOperation;
-import org.hpi.protocol.operation.ListInvokersOperation;
-import org.hpi.protocol.operation.LoginOperation;
-import org.hpi.protocol.operation.LogoffOperation;
-import org.hpi.protocol.operation.Operation;
-import org.hpi.protocol.operation.ShutdownServerOperation;
-import org.hpi.protocol.response.ListInvokersResponse;
-import org.hpi.protocol.response.LoginResponse;
-import org.hpi.protocol.response.LogoffResponse;
-import org.hpi.protocol.response.Response;
-import org.hpi.protocol.response.ServerRunningResponse;
 import org.hpi.server.session.HPISession;
 import org.hpi.server.session.HPISessionManager;
 
@@ -44,46 +41,31 @@ class HPIServerImplProtocol extends Thread {
 	
 	@Override
 	public void run() {
-		PrintWriter writer = null;
-		BufferedReader reader = null;
+		HPIServerProtocol serverProtocol = new HPIServerProtocol(this.socket);
 		try {
-			writer = new PrintWriter(this.socket.getOutputStream(), true);
-			reader = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-			
-			String inputString = null;
 			
 			// print the first response that the server is alive
-			ServerRunningResponse serverUp = new ServerRunningResponse(Response.STATUS_CODE_SUCCESS, "service alive and ready to respond");
-			writer.println(serverUp.toString());
+			serverProtocol.writeResponse(new ServerRunningResponse("service alive and ready to respond", Response.Status.SUCCESS));
 			
-			while ((inputString = reader.readLine()) != null) {
-				Operation operation = Operation.build(inputString);
-				
-				if (operation instanceof LoginOperation) {
-					LoginResponse loginResponse = this.doLogin((LoginOperation) operation); 
-					writer.println(loginResponse.toString());
-				} else if (operation instanceof ListInvokersOperation) {
-					ListInvokersResponse invokersResponse = this.retrieveListInvokers((ListInvokersOperation) operation);
-					writer.println(invokersResponse.toString());
-				} else if (operation instanceof ExecuteInvokerOperation) {
+			Request clientRequest = null;
+			while ((clientRequest = serverProtocol.readRequest()) != null) {
+				if (clientRequest instanceof LoginRequest) { // login request
+					serverProtocol.writeResponse(this.doLogin((LoginRequest) clientRequest));
+				} else if (clientRequest instanceof ListInvokersRequest) { // list invokers request
+					serverProtocol.writeResponse(this.retrieveListInvokers((ListInvokersRequest) clientRequest));
+				} else if (clientRequest instanceof ExecuteInvokerRequest) { // execute invoker request
 					// TODO
-				} else if (operation instanceof LogoffOperation) {
-					LogoffResponse logoffResponse = this.doLogoff((LogoffOperation)operation);
-					writer.println(logoffResponse.toString());
-				} else if (operation instanceof ShutdownServerOperation) {
+				} else if (clientRequest instanceof LogoffRequest) { // logoff request
+					this.doLogoff((LogoffRequest) clientRequest);
+				} else if (clientRequest instanceof ServerShutdownRequest) { // shutdown request
 					ServerBridge.SHUTDOWN = true;
-				} else throw new IllegalStateException("Unkonw the operation. operation name: " + operation.getOperationName());
+					break;
+				} else throw new IllegalStateException("Request type unknown.");
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} finally {
-			try {
-				if (reader != null) reader.close();
-				if (writer != null) writer.close();
-				if (this.socket != null) this.socket.close();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
+			serverProtocol.closeSocket();
 		}
 	}
 
@@ -92,28 +74,29 @@ class HPIServerImplProtocol extends Thread {
 	 * @param operation
 	 * @return
 	 */
-	private LogoffResponse doLogoff(LogoffOperation operation) {
+	private LogoffResponse doLogoff(LogoffRequest operation) {
 		HPISessionManager sessionManager = HPISessionManager.getInstance();
 		if (sessionManager.deleteSession(operation.getSessionId())) {
-			return new LogoffResponse(Response.STATUS_CODE_SUCCESS, "The session was removed successfully.");
+			return new LogoffResponse("The session was removed successfully.", Response.Status.SUCCESS);
 		} else {
-			return new LogoffResponse(Response.STATUS_CODE_FAIL, "No session was found to remove.");
+			return new LogoffResponse("No session was found to remove.", Response.Status.FAIL);
 		}
 	}
 
 	/**
 	 * Implementing the service do login and returning the result of it
-	 * @param operation
+	 * @param request
 	 * @return
 	 */
-	private LoginResponse doLogin(LoginOperation operation) {
-		User user = HPIDataFactory.getInstance().getUser(operation.getNickname());
-		if (user != null && user.getPassphrase().equals(operation.getPassphrase())) {
+	private LoginResponse doLogin(LoginRequest request) {
+		User user = HPIDataFactory.getInstance().getUser(request.getNickname());
+		if (user != null && user.getPassphrase().equals(request.getPassphrase())) {
 			String remoteAddress = this.socket.getRemoteSocketAddress().toString();
 			HPISession session = HPISessionManager.getInstance().newSession(user, remoteAddress);
-			return new LoginResponse(Response.STATUS_CODE_SUCCESS, "User logged successfully.", session.getSession_id());
+			
+			return new LoginResponse(session.getSession_id(), "User logged successfully.", Response.Status.SUCCESS);
 		} else {
-			return new LoginResponse(Response.STATUS_CODE_FAIL, "User not found or passphrase doesn't match.", "invalid session");
+			return new LoginResponse("invalid session", "User not found or passphrase doesn't match.", Response.Status.FAIL);
 		}
 	}
 	
@@ -122,18 +105,18 @@ class HPIServerImplProtocol extends Thread {
 	 * @param operation
 	 * @return
 	 */
-	private ListInvokersResponse retrieveListInvokers(ListInvokersOperation operation) {
+	private ListInvokersResponse retrieveListInvokers(ListInvokersRequest operation) {
+		List<String> listInvokers = new ArrayList<String>();
 		try {
 			HPISessionManager sessionManager = HPISessionManager.getInstance();
 			sessionManager.updateSession(operation.getSessionId());
 			HPIDataFactory dataFactory = HPIDataFactory.getInstance();
-			List<String> listInvokers = new ArrayList<String>();
 			for (Invoker invoker : dataFactory.getInvokers()) {
 				listInvokers.add("id: " + invoker.getId() + ", description: " + invoker.getDescription());
 			}
-			return new ListInvokersResponse(Response.STATUS_CODE_SUCCESS, "List invokers executed successfully.", listInvokers);
+			return new ListInvokersResponse(listInvokers, "List invokers executed successfully.", Response.Status.SUCCESS);
 		} catch (HPISessionException e) {
-			return new ListInvokersResponse(Response.STATUS_CODE_FAIL, "The session is not valid. " + e.getMessage(), null);
+			return new ListInvokersResponse(listInvokers, "The session is not valid. " + e.getMessage(), Response.Status.FAIL);
 		}
 	}
 }
