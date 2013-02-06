@@ -3,7 +3,10 @@
  */
 package org.hpi.dialogue.protocol.service;
 
-import java.io.IOException;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 import org.hpi.dialogue.protocol.request.ExecuteInvokerRequest;
@@ -17,7 +20,7 @@ import org.hpi.dialogue.protocol.response.ListInvokersResponse;
 import org.hpi.dialogue.protocol.response.LoginResponse;
 import org.hpi.dialogue.protocol.response.LogoffResponse;
 import org.hpi.dialogue.protocol.response.Response;
-import org.hpi.dialogue.protocol.response.ServerRunningResponse;
+import org.hpi.dialogue.protocol.response.ServerShutdownResponse;
 
 /**
  * @author villjea
@@ -34,61 +37,51 @@ public class HPIClientProtocol extends HPIServiceProtocol {
 		this.portNumber = portNumber;
 	}
 	
-	private Response writeRequestReadResponse(Request request) {
-		this.validateStarting();
+	private Response doWriteAndGetResponse(Request request) {
 		try {
+			// initiating the socket
+			this.setSocket(new Socket(this.serverAddress, this.portNumber));
+			
+			// initiating the writer
+			BufferedOutputStream bufferedOutput = new BufferedOutputStream(this.getSocket().getOutputStream());
+			this.setWriter(new ObjectOutputStream(bufferedOutput));
 			this.getWriter().writeObject(request);
-			return (Response) this.getReader().readObject();
+			this.getWriter().flush();
+
+			// initiating the reader
+			BufferedInputStream bufferedInput = new BufferedInputStream(this.getSocket().getInputStream());
+			this.setReader(new ObjectInputStream(bufferedInput));
+			
+			// deserializing the object from server
+			Response response = (Response) this.getReader().readObject();
+			
+			// closing the connections
+			this.closeSocket();
+			
+			// return the retrieved response
+			return response;
 		} catch (Exception e) {
 			throw new RuntimeException();
 		}
 	}
 	
-	private void validateStarting() {
-		if (!this.isSocketPrepared()) {
-			throw new IllegalStateException("The socket has not been started yet.");
-		}
-	}
-	
-	public boolean isConnected() {
-		this.validateStarting();
-		return this.getSocket().isConnected();
-	}
-	
-	public ServerRunningResponse openConnection() {
-		try {
-			// initiating the socket
-			this.prepareSocket(new Socket(this.serverAddress, this.portNumber));
-			
-			// return the current status of the server
-			return (ServerRunningResponse) this.getReader().readObject();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
-	public void serverShutdown() {
-		this.validateStarting();
-		try {
-			this.getWriter().writeObject(new ServerShutdownRequest());
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+	public ServerShutdownResponse serverShutdown() {
+		return (ServerShutdownResponse) this.doWriteAndGetResponse(new ServerShutdownRequest());
 	}
 	
 	public LoginResponse doLogin(String nickname, String passphrase) {
-		return (LoginResponse) this.writeRequestReadResponse(new LoginRequest(nickname, passphrase));
+		return (LoginResponse) this.doWriteAndGetResponse(new LoginRequest(nickname, passphrase));
 	}
 	
 	public ListInvokersResponse listInvokers(String sessionId) {
-		return (ListInvokersResponse) this.writeRequestReadResponse(new ListInvokersRequest(sessionId));
+		return (ListInvokersResponse) this.doWriteAndGetResponse(new ListInvokersRequest(sessionId));
 	}
 	
 	public ExecuteInvokerResponse executeInvoker(String sessionId, String invokeId) {
-		return (ExecuteInvokerResponse) this.writeRequestReadResponse(new ExecuteInvokerRequest(sessionId, invokeId));
+		return (ExecuteInvokerResponse) this.doWriteAndGetResponse(new ExecuteInvokerRequest(sessionId, invokeId));
 	}
 	
 	public LogoffResponse doLogoff(String sessionId) {
-		return (LogoffResponse) this.writeRequestReadResponse(new LogoffRequest(sessionId));
+		return (LogoffResponse) this.doWriteAndGetResponse(new LogoffRequest(sessionId));
 	}
 }

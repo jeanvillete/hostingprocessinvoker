@@ -19,7 +19,8 @@ import org.simplestructruedata.entities.SSDObjectNode;
 public class ServerBridge {
 	
 	private static final Logger 	log = Logger.getLogger(ServerBridge.class.getName());
-	private static final long		TIME_CHECK_SHUTDOWN = 1000 * 5;
+	
+	static final long				TIME_CHECK_SHUTDOWN = 1000 * 5;
 	static boolean					SHUTDOWN = false;
 
 	public ServerBridge() { }

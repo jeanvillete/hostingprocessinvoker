@@ -6,7 +6,7 @@
 	, configuration_server {
 		port_number = "4444"
 		, session_manager = {
-			keep_session_alive = "180000"
+			keep_session_alive = "500"
 		}
 	}
 	, users = [

@@ -18,7 +18,7 @@ import org.hpi.dialogue.protocol.response.ListInvokersResponse;
 import org.hpi.dialogue.protocol.response.LoginResponse;
 import org.hpi.dialogue.protocol.response.LogoffResponse;
 import org.hpi.dialogue.protocol.response.Response;
-import org.hpi.dialogue.protocol.response.ServerRunningResponse;
+import org.hpi.dialogue.protocol.response.ServerShutdownResponse;
 import org.hpi.dialogue.protocol.service.HPIServerProtocol;
 import org.hpi.entities.Invoker;
 import org.hpi.entities.User;
@@ -41,31 +41,44 @@ class HPIServerImplProtocol extends Thread {
 	
 	@Override
 	public void run() {
-		HPIServerProtocol serverProtocol = new HPIServerProtocol(this.socket);
+		HPIServerProtocol serverProtocol = null;
 		try {
+			serverProtocol = new HPIServerProtocol(this.socket);
+			Request clientRequest = serverProtocol.readRequest();
+			Response response = null;
+
+			// deciding the correct request
+			if (clientRequest instanceof LoginRequest) { // login request
+				response = this.doLogin((LoginRequest) clientRequest);
+			} else if (clientRequest instanceof ListInvokersRequest) { // list invokers request
+				response = this.retrieveListInvokers((ListInvokersRequest) clientRequest);
+			} else if (clientRequest instanceof ExecuteInvokerRequest) { // execute invoker request
+				// TODO
+			} else if (clientRequest instanceof LogoffRequest) { // logoff request
+				response = this.doLogoff((LogoffRequest) clientRequest);
+			} else if (clientRequest instanceof ServerShutdownRequest) { // shutdown request
+				new Thread() {
+					@Override
+					public void run() {
+						try {
+							Thread.sleep(ServerBridge.TIME_CHECK_SHUTDOWN);
+							ServerBridge.SHUTDOWN = true;
+						} catch (InterruptedException e) {
+							throw new RuntimeException(e);
+						}
+					}
+				}.start();
+				response = new ServerShutdownResponse("Request to shutdown server received successfully and schedulled to execute in 5 seconds.", Response.Status.SUCCESS);
+			} else throw new IllegalStateException("Request type unknown.");
 			
-			// print the first response that the server is alive
-			serverProtocol.writeResponse(new ServerRunningResponse("service alive and ready to respond", Response.Status.SUCCESS));
-			
-			Request clientRequest = null;
-			while ((clientRequest = serverProtocol.readRequest()) != null) {
-				if (clientRequest instanceof LoginRequest) { // login request
-					serverProtocol.writeResponse(this.doLogin((LoginRequest) clientRequest));
-				} else if (clientRequest instanceof ListInvokersRequest) { // list invokers request
-					serverProtocol.writeResponse(this.retrieveListInvokers((ListInvokersRequest) clientRequest));
-				} else if (clientRequest instanceof ExecuteInvokerRequest) { // execute invoker request
-					// TODO
-				} else if (clientRequest instanceof LogoffRequest) { // logoff request
-					this.doLogoff((LogoffRequest) clientRequest);
-				} else if (clientRequest instanceof ServerShutdownRequest) { // shutdown request
-					ServerBridge.SHUTDOWN = true;
-					break;
-				} else throw new IllegalStateException("Request type unknown.");
-			}
+			// writing the serialized response
+			serverProtocol.writeResponse(response);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} finally {
-			serverProtocol.closeSocket();
+			if (serverProtocol != null) {
+				serverProtocol.closeSocket();
+			}
 		}
 	}
 
