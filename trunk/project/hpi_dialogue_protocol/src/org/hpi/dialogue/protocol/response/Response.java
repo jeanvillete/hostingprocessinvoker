@@ -6,7 +6,7 @@ package org.hpi.dialogue.protocol.response;
 import org.hpi.dialogue.protocol.HPIDialogueProtocol;
 
 /**
- * @author villjea
+ * @author Jean Villete
  *
  */
 public abstract class Response extends HPIDialogueProtocol {

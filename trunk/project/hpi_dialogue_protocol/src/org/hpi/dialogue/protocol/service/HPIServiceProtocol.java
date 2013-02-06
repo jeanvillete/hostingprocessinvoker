@@ -8,7 +8,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
- * @author villjea
+ * @author Jean Villete
  *
  */
 public abstract class HPIServiceProtocol {

@@ -4,7 +4,7 @@
 package org.hpi.dialogue.protocol.request;
 
 /**
- * @author villjea
+ * @author Jean Villete
  *
  */
 public class DescribeInvokerRequest extends SessionedRequest {

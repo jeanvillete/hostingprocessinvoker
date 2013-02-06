@@ -1,0 +1,50 @@
+{
+	description = "sample invoker ssd file"
+	, executables = [
+		{
+			canonical_path = "C:\\jb\\Program Files\\Apache Software Foundation\\Tomcat 6.0\\bin\\startup.bat"
+			, parameters = [
+				{ key = "parameter key 1", value = "parameter value 1"}
+				, { key = "parameter key 2", value = "parameter value 2"}
+				, { key = "parameter key 3", value = "parameter value 3"}
+				, { key = "parameter key n", value = "parameter value n"}
+			]
+		}
+		{
+			canonical_path = "C:\\jb\\Program Files\\Apache Software Foundation\\Tomcat 6.0\\bin\\startup.bat"
+			, parameters = [
+				{ key = "parameter key 1", value = "parameter value 1"}
+				, { key = "parameter key 2", value = "parameter value 2"}
+				, { key = "parameter key 3", value = "parameter value 3"}
+				, { key = "parameter key n", value = "parameter value n"}
+			]
+		}
+		{
+			canonical_path = "C:\\jb\\Program Files\\Apache Software Foundation\\Tomcat 6.0\\bin\\startup.bat"
+			, parameters = [
+				{ key = "parameter key 1", value = "parameter value 1"}
+				, { key = "parameter key 2", value = "parameter value 2"}
+				, { key = "parameter key 3", value = "parameter value 3"}
+				, { key = "parameter key n", value = "parameter value n"}
+			]
+		}
+		{
+			canonical_path = "C:\\jb\\Program Files\\Apache Software Foundation\\Tomcat 6.0\\bin\\startup.bat"
+			, parameters = [
+				{ key = "parameter key 1", value = "parameter value 1"}
+				, { key = "parameter key 2", value = "parameter value 2"}
+				, { key = "parameter key 3", value = "parameter value 3"}
+				, { key = "parameter key n", value = "parameter value n"}
+			]
+		}
+		{
+			canonical_path = "C:\\jb\\Program Files\\Apache Software Foundation\\Tomcat 6.0\\bin\\startup.bat"
+			, parameters = [
+				{ key = "parameter key 1", value = "parameter value 1"}
+				, { key = "parameter key 2", value = "parameter value 2"}
+				, { key = "parameter key 3", value = "parameter value 3"}
+				, { key = "parameter key n", value = "parameter value n"}
+			]
+		}
+	]
+}

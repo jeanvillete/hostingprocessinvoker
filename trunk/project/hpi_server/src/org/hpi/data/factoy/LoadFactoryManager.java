@@ -61,7 +61,7 @@ public abstract class LoadFactoryManager {
 			executable.setCanonicalPath(ssdExecutable.getLeaf(HPIConstants.CANONICAL_PATH_INVOKER_FILE).getValue());
 			
 			SSDObjectArray ssdParameters = ssdExecutable.getArray(HPIConstants.PARAMETERS_INVOKER_FILE);
-			for (int j = 0; j < ssdParameters.getSize(); i++) {
+			for (int j = 0; j < ssdParameters.getSize(); j++) {
 				SSDObjectNode ssdParameter = ssdParameters.getNode(j);
 				Parameter parameter = new Parameter();
 				parameter.setKey(ssdParameter.getLeaf(HPIConstants.KEY_INVOKER_FILE).getValue());

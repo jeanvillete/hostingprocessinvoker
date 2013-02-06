@@ -6,7 +6,7 @@ package org.hpi.dialogue.protocol.request;
 import org.hpi.dialogue.protocol.HPIDialogueProtocol;
 
 /**
- * @author villjea
+ * @author Jean Villete
  *
  */
 public abstract class Request extends HPIDialogueProtocol {
