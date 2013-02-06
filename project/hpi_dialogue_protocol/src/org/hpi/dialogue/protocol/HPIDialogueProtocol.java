@@ -6,7 +6,7 @@ package org.hpi.dialogue.protocol;
 import java.io.Serializable;
 
 /**
- * @author villjea
+ * @author Jean Villete
  *
  */
 public abstract class HPIDialogueProtocol implements Serializable {

@@ -10,21 +10,26 @@ import java.util.List;
 import org.hpi.data.factoy.HPIDataFactory;
 import org.hpi.dialogue.protocol.entities.Invoker;
 import org.hpi.dialogue.protocol.entities.User;
+import org.hpi.dialogue.protocol.request.DescribeInvokerRequest;
 import org.hpi.dialogue.protocol.request.ExecuteInvokerRequest;
 import org.hpi.dialogue.protocol.request.ListInvokersRequest;
 import org.hpi.dialogue.protocol.request.LoginRequest;
 import org.hpi.dialogue.protocol.request.LogoffRequest;
 import org.hpi.dialogue.protocol.request.Request;
 import org.hpi.dialogue.protocol.request.ServerShutdownRequest;
+import org.hpi.dialogue.protocol.response.DescribeInvokerResponse;
+import org.hpi.dialogue.protocol.response.ExecuteInvokerResponse;
 import org.hpi.dialogue.protocol.response.ListInvokersResponse;
 import org.hpi.dialogue.protocol.response.LoginResponse;
 import org.hpi.dialogue.protocol.response.LogoffResponse;
 import org.hpi.dialogue.protocol.response.Response;
 import org.hpi.dialogue.protocol.response.ServerShutdownResponse;
 import org.hpi.dialogue.protocol.service.HPIServerProtocol;
+import org.hpi.exception.HPIExecuteInvokerException;
 import org.hpi.exception.HPISessionException;
 import org.hpi.server.session.HPISession;
 import org.hpi.server.session.HPISessionManager;
+import org.hpi.service.ExecuteInvoker;
 
 /**
  * @author Jean Villete
@@ -52,8 +57,10 @@ class HPIServerImplProtocol extends Thread {
 				response = this.doLogin((LoginRequest) clientRequest);
 			} else if (clientRequest instanceof ListInvokersRequest) { // list invokers request
 				response = this.retrieveListInvokers((ListInvokersRequest) clientRequest);
+			} else if (clientRequest instanceof DescribeInvokerRequest) { // describe invoker request
+				response = this.describeInvoker((DescribeInvokerRequest) clientRequest);
 			} else if (clientRequest instanceof ExecuteInvokerRequest) { // execute invoker request
-				// TODO
+				response = this.executeInvoker((ExecuteInvokerRequest) clientRequest);
 			} else if (clientRequest instanceof LogoffRequest) { // logoff request
 				response = this.doLogoff((LogoffRequest) clientRequest);
 			} else if (clientRequest instanceof ServerShutdownRequest) { // shutdown request
@@ -79,6 +86,55 @@ class HPIServerImplProtocol extends Thread {
 			if (serverProtocol != null) {
 				serverProtocol.closeSocket();
 			}
+		}
+	}
+	
+	/**
+	 * Method responsible to manage the execution of the referenced invoker
+	 * @param clientRequest
+	 * @return
+	 */
+	private Response executeInvoker(ExecuteInvokerRequest clientRequest) {
+		try {
+			HPISessionManager sessionManager = HPISessionManager.getInstance();
+			sessionManager.updateSession(clientRequest.getSessionId());
+			
+			HPIDataFactory dataFactory = HPIDataFactory.getInstance();
+			Invoker invoker = dataFactory.getInvoker(clientRequest.getInvokeId());
+			
+			if (invoker != null) {
+				ExecuteInvoker service = new ExecuteInvoker(invoker);
+				String executionResult = service.runExecutables();
+				return new ExecuteInvokerResponse(executionResult, Response.Status.SUCCESS);
+			} else {
+				return new ExecuteInvokerResponse("No invoker was found for the id: " + clientRequest.getInvokeId(), Response.Status.FAIL);
+			}
+		} catch (HPISessionException e) {
+			return new ExecuteInvokerResponse("The session is not valid. " + e.getMessage(), Response.Status.FAIL);
+		} catch (HPIExecuteInvokerException e) {
+			return new ExecuteInvokerResponse("Error executing invoker. " + e.getMessage(), Response.Status.FAIL);
+		}
+	}
+
+	/**
+	 * 
+	 * @param clientRequest
+	 * @return
+	 */
+	private Response describeInvoker(DescribeInvokerRequest clientRequest) {
+		Invoker invoker = null;
+		try {
+			HPISessionManager sessionManager = HPISessionManager.getInstance();
+			sessionManager.updateSession(clientRequest.getSessionId());
+			HPIDataFactory dataFactory = HPIDataFactory.getInstance();
+			invoker = dataFactory.getInvoker(clientRequest.getInvokeId());
+			if (invoker != null) {
+				return new DescribeInvokerResponse(invoker, "Describe/consult invoker command executed successfully.", Response.Status.SUCCESS);
+			} else {
+				return new DescribeInvokerResponse(invoker, "No invoker was found for the id: " + clientRequest.getInvokeId(), Response.Status.FAIL);
+			}
+		} catch (HPISessionException e) {
+			return new DescribeInvokerResponse(invoker, "The session is not valid. " + e.getMessage(), Response.Status.FAIL);
 		}
 	}
 
@@ -115,14 +171,14 @@ class HPIServerImplProtocol extends Thread {
 	
 	/**
 	 * 
-	 * @param operation
+	 * @param request
 	 * @return
 	 */
-	private ListInvokersResponse retrieveListInvokers(ListInvokersRequest operation) {
+	private ListInvokersResponse retrieveListInvokers(ListInvokersRequest request) {
 		List<Invoker> listInvokers = null;
 		try {
 			HPISessionManager sessionManager = HPISessionManager.getInstance();
-			sessionManager.updateSession(operation.getSessionId());
+			sessionManager.updateSession(request.getSessionId());
 			HPIDataFactory dataFactory = HPIDataFactory.getInstance();
 			listInvokers = new ArrayList<Invoker>(dataFactory.getInvokers());
 			return new ListInvokersResponse(listInvokers, "List invokers executed successfully.", Response.Status.SUCCESS);

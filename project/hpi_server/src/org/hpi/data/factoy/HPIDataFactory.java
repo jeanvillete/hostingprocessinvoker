@@ -47,6 +47,10 @@ public class HPIDataFactory {
 	}
 	
 	// GETTERS AND SETTERS //
+	public Invoker getInvoker(String invokerId) {
+		return this.invokers.get(invokerId);
+	}
+	
 	public Collection<Invoker> getInvokers() {
 		return this.invokers.values();
 	}

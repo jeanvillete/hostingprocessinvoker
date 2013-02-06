@@ -17,6 +17,8 @@ public interface HPIConstants {
 
 	String					CONSOLE_PARAMETER_CURRENT_DIR = "-current_directory";
 	
+	String 					END_OF_LINE = "\n";
+	
 	String					EXECUTABLES_INVOKER_FILE = "executables";
 	String					DESCRIPTION_INVOKER_FILE = "description";
 	String					CANONICAL_PATH_INVOKER_FILE = "canonical_path";

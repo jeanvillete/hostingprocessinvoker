@@ -1,7 +1,11 @@
 import org.com.tatu.helper.GeneralsHelper;
 import org.com.tatu.helper.parameter.ConsoleParameters;
+import org.hpi.dialogue.protocol.entities.Executable;
 import org.hpi.dialogue.protocol.entities.Invoker;
+import org.hpi.dialogue.protocol.entities.Parameter;
 import org.hpi.dialogue.protocol.entities.User;
+import org.hpi.dialogue.protocol.response.DescribeInvokerResponse;
+import org.hpi.dialogue.protocol.response.ExecuteInvokerResponse;
 import org.hpi.dialogue.protocol.response.ListInvokersResponse;
 import org.hpi.dialogue.protocol.response.LoginResponse;
 import org.hpi.dialogue.protocol.response.LogoffResponse;
@@ -14,7 +18,7 @@ import org.hpi.dialogue.protocol.service.HPIClientProtocol;
  */
 
 /**
- * @author villjea
+ * @author Jean Villete
  *
  */
 public class HPIClient {
@@ -49,8 +53,10 @@ public class HPIClient {
 				System.out.println("The created session id was: " + loginResponse.getSessionId());
 				System.out.println("Server response: " + loginResponse.getMessage());
 			} else if (loginResponse.getStatus().equals(Response.Status.FAIL)) {
-				throw new IllegalStateException(loginResponse.getMessage()); 
+				System.out.println(loginResponse.getMessage());
 			} else throw new IllegalStateException("Unkonw the server's status code response");
+			
+			System.out.println();
 			
 			// list invokers
 			ListInvokersResponse invokersResponse = clientProtocol.listInvokers(loginResponse.getSessionId());
@@ -61,8 +67,40 @@ public class HPIClient {
 					System.out.println("\t\tid=" + invoker.getId() + ", description=" + invoker.getDescription());
 				}
 			} else if (invokersResponse.getStatus().equals(Response.Status.FAIL)) {
-				throw new IllegalStateException(invokersResponse.getMessage());
+				System.out.println(invokersResponse.getMessage());
 			} else throw new IllegalStateException("Unkonw the server's status code response");
+			
+			System.out.println();
+			
+			// describe an invoker
+			DescribeInvokerResponse invokerResponse = clientProtocol.describeInvoker(loginResponse.getSessionId(), "apache_tomcat_start");
+			if (invokerResponse.getStatus().equals(Response.Status.SUCCESS)) {
+				System.out.println("The describe invoker command has been executed.");
+				System.out.println("\tid = " + invokerResponse.getInvoker().getId());
+				System.out.println("\tdescription = " + invokerResponse.getInvoker().getDescription());
+				for (Executable executable : invokerResponse.getInvoker().getExecutables()) {
+					System.out.println("\t\texecutable = " + executable.getCanonicalPath());
+					for (Parameter parameter : executable.getParameters()) {
+						System.out.println("\t\t\tparameter key = " + parameter.getKey() + ", parameter value = " + parameter.getValue());
+					}
+				}
+				System.out.println(invokerResponse.getMessage());
+			} else if (invokerResponse.getStatus().equals(Response.Status.FAIL)) {
+				System.out.println(invokerResponse.getMessage());
+			} else throw new IllegalStateException("Unkonw the server's status code response");
+			
+			System.out.println();
+			
+			// execute invoker
+			ExecuteInvokerResponse executeResponse = clientProtocol.executeInvoker(loginResponse.getSessionId(), "apache_tomcat_start");
+			if (executeResponse.getStatus().equals(Response.Status.SUCCESS)) {
+				System.out.println("The execution of the invoker has been executed successfully.");
+				System.out.println(executeResponse.getMessage());
+			} else if (executeResponse.getStatus().equals(Response.Status.FAIL)) {
+				System.out.println(executeResponse.getMessage());
+			} else throw new IllegalStateException("Unkonw the server's status code response");
+			
+			System.out.println();
 			
 			// do logoff
 			LogoffResponse logoffResponse = clientProtocol.doLogoff(loginResponse.getSessionId());
@@ -70,8 +108,10 @@ public class HPIClient {
 				System.out.println("The logoff has been executed.");
 				System.out.println(logoffResponse.getMessage());
 			} else if (logoffResponse.getStatus().equals(Response.Status.FAIL)) {
-				throw new IllegalStateException(logoffResponse.getMessage());
+				System.out.println(logoffResponse.getMessage());
 			} else throw new IllegalStateException("Unkonw the server's status code response");
+			
+			System.out.println();
 			
 			// invoking shutdown
 			ServerShutdownResponse shutdownResponse = clientProtocol.serverShutdown();

@@ -4,7 +4,7 @@
 package org.hpi.dialogue.protocol.response;
 
 /**
- * @author villjea
+ * @author Jean Villete
  *
  */
 public class LoginResponse extends Response {

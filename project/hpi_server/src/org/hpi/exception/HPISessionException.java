@@ -3,8 +3,6 @@
  */
 package org.hpi.exception;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Jean Villete
@@ -12,10 +10,8 @@ import java.util.List;
  */
 public class HPISessionException extends HPIException {
 	
-	private static final long serialVersionUID = -1286745632007393582L;
-	
-	private List<String>                messages = new ArrayList<String>();
-	
+	private static final long serialVersionUID = -3756455779607693382L;
+
 	public HPISessionException() {
 	}
 	
@@ -24,7 +20,7 @@ public class HPISessionException extends HPIException {
 	}
 	
 	public void appendMessage(String message) {
-        this.messages.add(message);
+		this.appendMessage(message);
 	}
 	
 }

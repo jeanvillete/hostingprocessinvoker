@@ -6,7 +6,7 @@ package org.hpi.dialogue.protocol.response;
 import org.hpi.dialogue.protocol.entities.Invoker;
 
 /**
- * @author villjea
+ * @author Jean Villete
  *
  */
 public class DescribeInvokerResponse extends Response {
