@@ -1,22 +1,25 @@
 /**
  * 
  */
-package org.hpi.entities;
+package org.hpi.dialogue.protocol.entities;
 
-import org.com.tatu.helper.parameter.Parameter;
+import java.io.Serializable;
 
 /**
  * @author Jean Villete
  *
  */
-public class User {
+public class User implements Serializable {
 
+	private static final long serialVersionUID = 2175609209630322409L;
+	
 	private String					nickname;
 	private String					passphrase;
 	
 	public User(String nickname, String passphrase) {
-		Parameter.check(nickname, passphrase).notNull().notEmpty();
-		
+		if (nickname == null || nickname.isEmpty() || passphrase == null || passphrase.isEmpty()) {
+			throw new IllegalArgumentException("Parameter cann't be null or empty.");
+		}
 		this.nickname = nickname;
 		this.passphrase = passphrase;
 	}

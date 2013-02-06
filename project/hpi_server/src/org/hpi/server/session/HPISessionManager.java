@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.com.tatu.helper.parameter.Parameter;
-import org.hpi.entities.User;
+import org.hpi.dialogue.protocol.entities.User;
 import org.hpi.exception.HPISessionException;
 
 /**

@@ -2,20 +2,22 @@ package org.hpi.dialogue.protocol.response;
 
 import java.util.List;
 
+import org.hpi.dialogue.protocol.entities.Invoker;
+
 public class ListInvokersResponse extends Response {
 
-	private static final long serialVersionUID = 1794369418580495583L;
+	private static final long serialVersionUID = -5143130097598698256L;
 	
-	private List<String>					listInvokersId;
+	private List<Invoker>					listInvokers;
 	
-	public ListInvokersResponse(List<String> listInvokersId, String message, Status status) {
+	public ListInvokersResponse(List<Invoker> listInvokers, String message, Status status) {
 		super(message, status);
-		this.listInvokersId = listInvokersId;
+		this.listInvokers = listInvokers;
 	}
 
 	// GETTERS AND SETTERS //
-	public List<String> getListInvokersId() {
-		return listInvokersId;
+	public List<Invoker> getListInvokers() {
+		return listInvokers;
 	}
 
 }

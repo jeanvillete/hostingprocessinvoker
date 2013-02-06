@@ -9,6 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import org.hpi.dialogue.protocol.entities.User;
 import org.hpi.dialogue.protocol.request.ExecuteInvokerRequest;
 import org.hpi.dialogue.protocol.request.ListInvokersRequest;
 import org.hpi.dialogue.protocol.request.LoginRequest;
@@ -69,8 +70,8 @@ public class HPIClientProtocol extends HPIServiceProtocol {
 		return (ServerShutdownResponse) this.doWriteAndGetResponse(new ServerShutdownRequest());
 	}
 	
-	public LoginResponse doLogin(String nickname, String passphrase) {
-		return (LoginResponse) this.doWriteAndGetResponse(new LoginRequest(nickname, passphrase));
+	public LoginResponse doLogin(User user) {
+		return (LoginResponse) this.doWriteAndGetResponse(new LoginRequest(user));
 	}
 	
 	public ListInvokersResponse listInvokers(String sessionId) {
