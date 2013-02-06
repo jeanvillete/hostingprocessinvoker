@@ -1,12 +1,13 @@
-package org.hpi.entities;
+package org.hpi.dialogue.protocol.entities;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.com.tatu.helper.parameter.Parameter;
+public class Invoker implements Serializable {
 
-public class Invoker {
-
+	private static final long serialVersionUID = -2498044589110396765L;
+	
 	private String					id;
 	private String					description;
 	private List<Executable>		executables;
@@ -15,7 +16,9 @@ public class Invoker {
 	}
 	
 	public Invoker(String id) {
-		Parameter.check(id).notNull().notEmpty();
+		if (id == null || id.isEmpty()) {
+			throw new IllegalArgumentException("Parameter cann't be null or empty.");
+		}
 		this.id = id;
 	}
 	

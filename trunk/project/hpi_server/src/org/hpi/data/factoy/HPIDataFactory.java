@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.hpi.entities.Invoker;
-import org.hpi.entities.User;
+import org.hpi.dialogue.protocol.entities.Invoker;
+import org.hpi.dialogue.protocol.entities.User;
 
 public class HPIDataFactory {
 

@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hpi.data.factoy.HPIDataFactory;
+import org.hpi.dialogue.protocol.entities.Invoker;
+import org.hpi.dialogue.protocol.entities.User;
 import org.hpi.dialogue.protocol.request.ExecuteInvokerRequest;
 import org.hpi.dialogue.protocol.request.ListInvokersRequest;
 import org.hpi.dialogue.protocol.request.LoginRequest;
@@ -20,8 +22,6 @@ import org.hpi.dialogue.protocol.response.LogoffResponse;
 import org.hpi.dialogue.protocol.response.Response;
 import org.hpi.dialogue.protocol.response.ServerShutdownResponse;
 import org.hpi.dialogue.protocol.service.HPIServerProtocol;
-import org.hpi.entities.Invoker;
-import org.hpi.entities.User;
 import org.hpi.exception.HPISessionException;
 import org.hpi.server.session.HPISession;
 import org.hpi.server.session.HPISessionManager;
@@ -102,8 +102,8 @@ class HPIServerImplProtocol extends Thread {
 	 * @return
 	 */
 	private LoginResponse doLogin(LoginRequest request) {
-		User user = HPIDataFactory.getInstance().getUser(request.getNickname());
-		if (user != null && user.getPassphrase().equals(request.getPassphrase())) {
+		User user = HPIDataFactory.getInstance().getUser(request.getUser().getNickname());
+		if (user != null && user.getPassphrase().equals(request.getUser().getPassphrase())) {
 			String remoteAddress = this.socket.getRemoteSocketAddress().toString();
 			HPISession session = HPISessionManager.getInstance().newSession(user, remoteAddress);
 			
@@ -119,14 +119,12 @@ class HPIServerImplProtocol extends Thread {
 	 * @return
 	 */
 	private ListInvokersResponse retrieveListInvokers(ListInvokersRequest operation) {
-		List<String> listInvokers = new ArrayList<String>();
+		List<Invoker> listInvokers = null;
 		try {
 			HPISessionManager sessionManager = HPISessionManager.getInstance();
 			sessionManager.updateSession(operation.getSessionId());
 			HPIDataFactory dataFactory = HPIDataFactory.getInstance();
-			for (Invoker invoker : dataFactory.getInvokers()) {
-				listInvokers.add("id: " + invoker.getId() + ", description: " + invoker.getDescription());
-			}
+			listInvokers = new ArrayList<Invoker>(dataFactory.getInvokers());
 			return new ListInvokersResponse(listInvokers, "List invokers executed successfully.", Response.Status.SUCCESS);
 		} catch (HPISessionException e) {
 			return new ListInvokersResponse(listInvokers, "The session is not valid. " + e.getMessage(), Response.Status.FAIL);

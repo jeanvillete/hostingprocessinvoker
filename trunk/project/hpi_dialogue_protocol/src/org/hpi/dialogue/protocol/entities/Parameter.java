@@ -1,6 +1,10 @@
-package org.hpi.entities;
+package org.hpi.dialogue.protocol.entities;
 
-public class Parameter {
+import java.io.Serializable;
+
+public class Parameter implements Serializable {
+	
+	private static final long serialVersionUID = 8577776317880486807L;
 	
 	private String				key;
 	private String				value;
@@ -9,7 +13,9 @@ public class Parameter {
 	}
 
 	public Parameter(String key, String value) {
-		org.com.tatu.helper.parameter.Parameter.check(key, value).notNull().notEmpty();
+		if (key == null || key.isEmpty() || value == null || value.isEmpty()) {
+			throw new IllegalArgumentException("Parameter cann't be null or empty.");
+		}
 		this.key = key;
 		this.value = value;
 	}

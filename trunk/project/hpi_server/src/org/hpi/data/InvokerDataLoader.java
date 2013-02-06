@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 import org.hpi.common.HPIConstants;
 import org.hpi.data.factoy.LoadFactoryManager;
-import org.hpi.entities.User;
+import org.hpi.dialogue.protocol.entities.User;
 import org.hpi.exception.HPIRuntimeException;
 import org.simplestructruedata.data.SSDContextManager.SSDRootObject;
 import org.simplestructruedata.entities.SSDObjectArray;

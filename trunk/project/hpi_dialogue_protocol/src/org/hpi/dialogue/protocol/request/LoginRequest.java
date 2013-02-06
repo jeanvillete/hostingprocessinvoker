@@ -1,24 +1,21 @@
 package org.hpi.dialogue.protocol.request;
 
+import org.hpi.dialogue.protocol.entities.User;
+
 public class LoginRequest extends Request {
 
-	private static final long serialVersionUID = -3484304702803121861L;
+	private static final long serialVersionUID = 2289874317473885068L;
 	
-	private String				nickname;
-	private String				passphrase;
+	private User 					user;
 	
-	public LoginRequest(String nickname, String passphrase) {
+	public LoginRequest(User user) {
 		super();
-		this.nickname = nickname;
-		this.passphrase = passphrase;
+		this.user = user;
 	}
-	
+
 	// GETTERS AND SETTERS //
-	public String getNickname() {
-		return nickname;
-	}
-	public String getPassphrase() {
-		return passphrase;
+	public User getUser() {
+		return user;
 	}
 	
 }

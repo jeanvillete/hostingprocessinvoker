@@ -1,10 +1,13 @@
-package org.hpi.entities;
+package org.hpi.dialogue.protocol.entities;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Executable {
+public class Executable implements Serializable {
 
+	private static final long serialVersionUID = -7347067363383932224L;
+	
 	private String					canonicalPath;
 	private List<Parameter>			parameters;
 	

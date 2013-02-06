@@ -9,10 +9,10 @@ import java.util.logging.Logger;
 
 import org.com.tatu.helper.FileHelper;
 import org.hpi.common.HPIConstants;
-import org.hpi.entities.Executable;
-import org.hpi.entities.Invoker;
-import org.hpi.entities.Parameter;
-import org.hpi.entities.User;
+import org.hpi.dialogue.protocol.entities.Executable;
+import org.hpi.dialogue.protocol.entities.Invoker;
+import org.hpi.dialogue.protocol.entities.Parameter;
+import org.hpi.dialogue.protocol.entities.User;
 import org.simplestructruedata.data.SSDContextManager;
 import org.simplestructruedata.data.SSDContextManager.SSDRootObject;
 import org.simplestructruedata.entities.SSDObjectArray;

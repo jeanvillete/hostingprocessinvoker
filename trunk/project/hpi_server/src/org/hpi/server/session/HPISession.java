@@ -4,7 +4,7 @@
 package org.hpi.server.session;
 
 import org.com.tatu.helper.parameter.Parameter;
-import org.hpi.entities.User;
+import org.hpi.dialogue.protocol.entities.User;
 
 /**
  * @author Jean Villete

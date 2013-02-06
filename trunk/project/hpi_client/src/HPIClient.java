@@ -1,9 +1,12 @@
 import org.com.tatu.helper.GeneralsHelper;
 import org.com.tatu.helper.parameter.ConsoleParameters;
+import org.hpi.dialogue.protocol.entities.Invoker;
+import org.hpi.dialogue.protocol.entities.User;
 import org.hpi.dialogue.protocol.response.ListInvokersResponse;
 import org.hpi.dialogue.protocol.response.LoginResponse;
 import org.hpi.dialogue.protocol.response.LogoffResponse;
 import org.hpi.dialogue.protocol.response.Response;
+import org.hpi.dialogue.protocol.response.ServerShutdownResponse;
 import org.hpi.dialogue.protocol.service.HPIClientProtocol;
 
 /**
@@ -40,7 +43,7 @@ public class HPIClient {
 			}
 			
 			// do login
-			LoginResponse loginResponse = clientProtocol.doLogin(userParam, passwordParam);
+			LoginResponse loginResponse = clientProtocol.doLogin(new User(userParam, passwordParam));
 			if (loginResponse.getStatus().equals(Response.Status.SUCCESS)) {
 				System.out.println("The user has been logged successfully");
 				System.out.println("The created session id was: " + loginResponse.getSessionId());
@@ -54,8 +57,8 @@ public class HPIClient {
 			if (invokersResponse.getStatus().equals(Response.Status.SUCCESS)) {
 				System.out.println("The ListInvokers command has been executed successfully.");
 				System.out.println("The list invokers are;");
-				for (String invoker : invokersResponse.getListInvokersId()) {
-					System.out.println("\t\t" + invoker);
+				for (Invoker invoker : invokersResponse.getListInvokers()) {
+					System.out.println("\t\tid=" + invoker.getId() + ", description=" + invoker.getDescription());
 				}
 			} else if (invokersResponse.getStatus().equals(Response.Status.FAIL)) {
 				throw new IllegalStateException(invokersResponse.getMessage());
@@ -65,12 +68,19 @@ public class HPIClient {
 			LogoffResponse logoffResponse = clientProtocol.doLogoff(loginResponse.getSessionId());
 			if (logoffResponse.getStatus().equals(Response.Status.SUCCESS)) {
 				System.out.println("The logoff has been executed.");
+				System.out.println(logoffResponse.getMessage());
 			} else if (logoffResponse.getStatus().equals(Response.Status.FAIL)) {
 				throw new IllegalStateException(logoffResponse.getMessage());
 			} else throw new IllegalStateException("Unkonw the server's status code response");
 			
 			// invoking shutdown
-			clientProtocol.serverShutdown();
+			ServerShutdownResponse shutdownResponse = clientProtocol.serverShutdown();
+			if (shutdownResponse.getStatus().equals(Response.Status.SUCCESS)) {
+				System.out.println("The shutdown request has been executed.");
+				System.out.println(shutdownResponse.getMessage());
+			} else if (shutdownResponse.getStatus().equals(Response.Status.FAIL)) {
+				throw new IllegalStateException(shutdownResponse.getMessage());
+			} else throw new IllegalStateException("Unkonw the server's status code response");
 		} catch (Exception e) {
 			System.out.println("Error: " + e.getMessage());
 		} finally {
