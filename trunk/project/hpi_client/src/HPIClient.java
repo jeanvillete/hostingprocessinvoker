@@ -1,15 +1,9 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.Socket;
-
 import org.com.tatu.helper.GeneralsHelper;
 import org.com.tatu.helper.parameter.ConsoleParameters;
 import org.hpi.dialogue.protocol.response.ListInvokersResponse;
 import org.hpi.dialogue.protocol.response.LoginResponse;
 import org.hpi.dialogue.protocol.response.LogoffResponse;
 import org.hpi.dialogue.protocol.response.Response;
-import org.hpi.dialogue.protocol.response.ServerRunningResponse;
 import org.hpi.dialogue.protocol.service.HPIClientProtocol;
 
 /**
@@ -26,9 +20,8 @@ public class HPIClient {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Socket managedSocket = null;
-		PrintWriter writer = null;
-		BufferedReader input = null;
+		
+		HPIClientProtocol clientProtocol = new HPIClientProtocol("127.0.0.1", 4444);
 		try {
 			ConsoleParameters consoleParameters = ConsoleParameters.getInstance(args);
 			
@@ -45,17 +38,6 @@ public class HPIClient {
 					!GeneralsHelper.isStringOk(passwordParam = consoleParameters.getValue("-p"))) {
 				throw new IllegalArgumentException("The parameter -password[p] is mandatory.");
 			}
-			
-			HPIClientProtocol clientProtocol = new HPIClientProtocol("127.0.0.1", 4444);
-			
-			// getting the first response of the target server, telling if the server is up
-			ServerRunningResponse serverUpResponse = clientProtocol.openConnection();
-			if (serverUpResponse.getStatus().equals(Response.Status.SUCCESS)) {
-				System.out.println("Communication stablished successfully.");
-				System.out.println("Server response: " + serverUpResponse.getMessage());
-			} else if (serverUpResponse.getStatus().equals(Response.Status.FAIL)) {
-				throw new IllegalStateException("The communication couldn't be stablished. " + serverUpResponse.getMessage());
-			} else throw new IllegalStateException("Unkonw the status code server's response");
 			
 			// do login
 			LoginResponse loginResponse = clientProtocol.doLogin(userParam, passwordParam);
@@ -88,17 +70,11 @@ public class HPIClient {
 			} else throw new IllegalStateException("Unkonw the server's status code response");
 			
 			// invoking shutdown
-//			clientProtocol.serverShutdown();
+			clientProtocol.serverShutdown();
 		} catch (Exception e) {
 			System.out.println("Error: " + e.getMessage());
 		} finally {
-			try {
-				if (input != null) input.close();
-				if (writer != null) writer.close();
-				if (managedSocket != null) managedSocket.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			clientProtocol.closeSocket();
 		}
 	}
 	
