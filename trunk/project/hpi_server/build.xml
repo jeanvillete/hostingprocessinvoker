@@ -1,0 +1,100 @@
+<project name="hpi_server" default="dist-hpi_server" basedir=".">
+	
+	<tstamp>
+		<format property="day" pattern="yyyyMMdd.HHmm"/>
+	</tstamp>
+	
+	<property name="hpi_server" value="${ant.project.name}"/>
+	<property name="hpi_server-home" value="../${hpi_server}"/>
+	<property name="hpi_server-home-dist" value="${hpi_server-home}/dist"/>
+	<property name="hpi_server-home-temp" value="${hpi_server-home-dist}/temp/"/>
+	<property name="hpi_server-home-temp-project" value="${hpi_server-home-temp}/${ant.project.name}"/>
+	<property name="hpi_server-home-temp-src" value="${hpi_server-home-temp-project}/src"/>
+	
+	<!-- mandatory app directories -->
+	<property name="hpi_server-home-temp-bin" value="${hpi_server-home-temp-project}/bin"/>
+	<property name="hpi_server-home-temp-dependencies" value="${hpi_server-home-temp-bin}/dependencies"/>
+	<property name="hpi_server-home-temp-conf" value="${hpi_server-home-temp-project}/conf"/>
+	<property name="hpi_server-home-temp-logs" value="${hpi_server-home-temp-project}/logs"/>
+	<property name="hpi_server-home-temp-mapinvs" value="${hpi_server-home-temp-project}/mapinvs"/>
+	
+	<property name="hpi_server-jar" value="${hpi_server-home-temp-project}/bin/${hpi_server}.jar"/>
+	<property name="hpi_server-zip" value="${hpi_server-home-dist}/${hpi_server}.${day}.zip"/>
+	
+	<target name="dist-hpi_server">
+		<!-- create required directories -->
+		<mkdir dir="${hpi_server-home-temp-project}"/>
+		<mkdir dir="${hpi_server-home-temp-src}"/>
+		<mkdir dir="${hpi_server-home-temp-dependencies}"/>
+		<mkdir dir="${hpi_server-home-temp-conf}"/>
+		<mkdir dir="${hpi_server-home-temp-logs}"/>
+		<mkdir dir="${hpi_server-home-temp-mapinvs}"/>
+		
+		<!-- copy the main src code -->
+		<copy todir="${hpi_server-home-temp-src}">
+			<fileset dir="${hpi_server-home}/src"/>
+		</copy>
+		<!-- copy the scripts -->
+		<copy todir="${hpi_server-home-temp-bin}">
+			<fileset dir="${hpi_server-home}/scripts"/>
+		</copy>
+		<!-- copy dependencies -->
+		<copy todir="${hpi_server-home-temp-dependencies}">
+			<fileset dir="${hpi_server-home}/dependencies"/>
+		</copy>
+		<!-- copy settings -->
+		<copy todir="${hpi_server-home-temp-conf}">
+			<fileset dir="${hpi_server-home}/conf"/>
+		</copy>
+		<!-- copy default mapinvs -->
+		<copy todir="${hpi_server-home-temp-mapinvs}">
+			<fileset dir="${hpi_server-home}/mapinvs"/>
+		</copy>
+		
+		<!-- set version and release data -->
+		<replace dir="${hpi_server-home-temp-src}/org/hpi/common" includes="HPIConstants.java"
+				token="ant:build:constant:version" value="1.0"/>
+		<replace dir="${hpi_server-home-temp-src}/org/hpi/common" includes="HPIConstants.java"
+				token="ant:build:constant:release" value="${hpi_server}.${day}"/>
+		
+		<!-- compile the src tmp directory with the correct version and release data -->
+		<javac srcdir="${hpi_server-home-temp-src}" destdir="${hpi_server-home}/bin" debug="yes" includeantruntime="false">
+			<classpath>
+				<fileset dir="${hpi_server-home-temp-dependencies}">
+					<include name="**/*.jar"/>
+				</fileset>
+			</classpath>
+		</javac>
+		
+		<!-- genereting hpi_server jar file -->
+		<!-- create a property containing all .jar files, prefix lib/, and seperated with a space -->
+		<pathconvert property="libs.project" pathsep=" ">
+			<mapper>
+				<chainedmapper>
+					<flattenmapper />
+					<globmapper from="*" to="dependencies/*" />
+				</chainedmapper>
+			</mapper>
+			<path>
+				<fileset dir="${hpi_server-home-temp-dependencies}">
+					<include name="**/*.jar" />
+				</fileset>
+			</path>
+		</pathconvert>
+		<jar jarfile="${hpi_server-jar}" basedir="${hpi_server-home}/bin">
+			<manifest>
+				<attribute name="Main-Class" value="HPIServer" />
+				<attribute name="Class-Path" value="${libs.project}" />
+			</manifest>
+		</jar>
+		
+		<!-- delete the source tmp directory -->
+		<delete dir="${hpi_server-home-temp-src}"/>
+		
+		<zip destfile="${hpi_server-zip}">
+		    <zipfileset dir="${hpi_server-home-temp}" />
+		</zip>
+		
+		<delete dir="${hpi_server-home-temp}"/>
+	</target>
+</project>

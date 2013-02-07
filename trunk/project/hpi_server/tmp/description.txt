@@ -13,14 +13,21 @@
 
 // hosting process invoker ssd configuration file structure
 {
-	mapped-folders = [
-		"C:/opt/hpi/hosting/folder1"
-		, "C:/opt/hpi/hosting/folder2"
-		, "C:/opt/hpi/hosting/folder3"
+	version = "1.0"
+	, mapped_folders = [
+		{ relative_server = "mapinvs" }
+		{ canonical_path = "C:\\TEMP\\hpi\\mappedfolder" }
 	]
-	, configuration-server {
-		port-number = "4444"
+	, configuration_server {
+		port_number = "4444"
+		, session_manager = {
+			keep_session_alive = "180000"
+		}
 	}
+	, users = [
+		{ nickname = "admin", passphrase = "admin"}
+		, { nickname = "jean", passphrase = "jbadm"}
+	]
 }
 
 

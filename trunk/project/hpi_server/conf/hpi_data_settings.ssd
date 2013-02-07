@@ -1,7 +1,7 @@
 {
 	version = "1.0"
 	, mapped_folders = [
-		"C:\\TEMP\\hpi\\mappedfolder"
+		{ relative_server = "mapinvs" }
 	]
 	, configuration_server {
 		port_number = "4444"

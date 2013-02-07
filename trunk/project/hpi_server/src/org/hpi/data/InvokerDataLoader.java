@@ -29,7 +29,7 @@ public class InvokerDataLoader extends LoadFactoryManager {
 	
 	private static final Logger log = Logger.getLogger(InvokerDataLoader.class.getName());
 	
-	public void startup(SSDRootObject ssdSettingsData) {
+	public void startup(File currentDirectory, SSDRootObject ssdSettingsData) {
 		log.log(Level.INFO, "Initializing HPI startup loader.");
 		
 		try {
@@ -48,7 +48,16 @@ public class InvokerDataLoader extends LoadFactoryManager {
 			// first load to invokers SSD files
 			SSDObjectArray ssdMappedFolders = ssdSettingsData.getArray(HPIConstants.CONFIGURATIONS_MAPPED_FOLDER);
 			for (int i = 0; i < ssdMappedFolders.getSize(); i++) {
-				File mappedFolder = new File(ssdMappedFolders.getLeaf(i).getValue());
+				SSDObjectNode ssdMappedFolder = ssdMappedFolders.getNode(i);
+				File mappedFolder = null;
+				if (ssdMappedFolder.get(HPIConstants.CONFIGURATIONS_RELATIVE_SERVER) != null) {
+					mappedFolder = new File(System.getenv(HPIConstants.ENV_HPI_BASE), 
+							".." + System.getProperty("file.separator") + 
+							ssdMappedFolder.getLeaf(HPIConstants.CONFIGURATIONS_RELATIVE_SERVER).getValue());
+				} else if (ssdMappedFolder.get(HPIConstants.CONFIGURATIONS_CANONICAL_PATH) != null) {
+					mappedFolder = new File(ssdMappedFolder.getLeaf(HPIConstants.CONFIGURATIONS_CANONICAL_PATH).getValue());
+				} else throw new IllegalStateException("There's some wrong thing in the " + HPIConstants.CONFIGURATIONS_MAPPED_FOLDER);
+				
 				for (File invokerFile : mappedFolder.listFiles(new FolderFilter())) {
 					this.addInvokerFile(invokerFile);
 				}
