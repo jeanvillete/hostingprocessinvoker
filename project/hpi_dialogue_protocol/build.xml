@@ -1,0 +1,20 @@
+<project name="hpi_dialogue_protocol" default="dist-hpi_dialogue_protocol" basedir=".">
+	
+	<tstamp>
+		<format property="day" pattern="yyyyMMdd.HHmm"/>
+	</tstamp>
+	
+	<property name="hpi_dialogue_protocol" value="hpi_dialogue_protocol"/>
+	<property name="hpi_dialogue_protocol-home" value="../${hpi_dialogue_protocol}"/>
+	<property name="hpi_dialogue_protocol-home-dist" value="${hpi_dialogue_protocol-home}/dist"/>
+	<property name="hpi_dialogue_protocol-jar" value="${hpi_dialogue_protocol-home-dist}/${hpi_dialogue_protocol}.${day}.jar"/>
+	
+	<target name="dist-hpi_dialogue_protocol">
+		
+		<mkdir dir="${hpi_dialogue_protocol-home-dist}"/>
+		
+		<zip destfile="${hpi_dialogue_protocol-jar}">
+		    <zipfileset dir="${hpi_dialogue_protocol-home}/bin" />
+		</zip>
+	</target>
+</project>

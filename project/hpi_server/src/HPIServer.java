@@ -22,22 +22,27 @@ public class HPIServer {
 		try {
 			log.log(Level.INFO, "HPI (Hosting Process Invoker) initializing.");
 			
-			ConsoleParameters consoleParameters = ConsoleParameters.getInstance(args);
-			File currentDirectory = new File(consoleParameters.getValue(HPIConstants.CONSOLE_PARAMETER_CURRENT_DIR, true));
+			File currentDirectory = new File(
+					ConsoleParameters.getInstance(args).getValue(HPIConstants.CONSOLE_PARAMETER_CURRENT_DIR, true).trim());
 			if (!currentDirectory.exists() || !currentDirectory.isDirectory()) {
 				throw new IllegalArgumentException("The directory " + currentDirectory.getCanonicalPath() 
 						+ " either doesn't exist or it isn't a directory.");
 			}
 			
+			log.log(Level.INFO, currentDirectory.getPath());
+			
 			// getting the settings file and its data to SSD context manager
 			File settingsFile = new File(currentDirectory, HPIConstants.CONFIGURATIONS_FILE_ADDRESS);
+			
+			log.log(Level.INFO, settingsFile.getPath());
+			
 			log.log(Level.INFO, "Looking for data settings at: " + settingsFile.getCanonicalPath());
 			SSDContextManager ssdCtx = SSDContextManager.build(settingsFile);
 			SSDRootObject ssdSettingsData = ssdCtx.getRootObject();
 			
 			// load the configuration and first data to FactoryManager and as well instatiating the data watcher to invokers folders
 			InvokerDataLoader dataLoader = new InvokerDataLoader();
-			dataLoader.startup(ssdSettingsData);
+			dataLoader.startup(currentDirectory, ssdSettingsData);
 			
 			// getting the keep session time alive to session manager startup
 			int keepSessionAlive = Integer.parseInt(

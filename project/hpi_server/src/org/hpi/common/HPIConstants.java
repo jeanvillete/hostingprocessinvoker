@@ -2,11 +2,22 @@ package org.hpi.common;
 
 public interface HPIConstants {
 	
+	/**
+	 * Constants Changeable by Ant:build
+	 * The following Constants have values that are changed in build time.
+	 */
+	String 					HPI_VERSION = "ant:build:constant:version";
+	String 					HPI_RELEASE = "ant:build:constant:release";
+	
+	String					ENV_HPI_BASE = "hpi.base";
+	
 	String 					SSD_EXTENSION = ".ssd";
 	
 	String					CONFIGURATIONS_FILE = "hpi_data_settings" + SSD_EXTENSION;
-	String					CONFIGURATIONS_FILE_ADDRESS = "conf" + System.getProperty("file.separator") + CONFIGURATIONS_FILE;
+	String					CONFIGURATIONS_FILE_ADDRESS = System.getProperty("file.separator") + ".." + System.getProperty("file.separator") + "conf" + System.getProperty("file.separator") + CONFIGURATIONS_FILE;
 	String					CONFIGURATIONS_MAPPED_FOLDER = "mapped_folders";
+	String					CONFIGURATIONS_RELATIVE_SERVER = "relative_server";
+	String					CONFIGURATIONS_CANONICAL_PATH = "canonical_path";
 	String					CONFIGURATIONS_USERS = "users";
 	String					CONFIGURATIONS_USERS_NICKNAME = "nickname";
 	String					CONFIGURATIONS_USERS_PASSPHRASE = "passphrase";
