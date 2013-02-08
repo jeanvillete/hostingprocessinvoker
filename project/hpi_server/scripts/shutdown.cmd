@@ -6,10 +6,7 @@ rem ---------------------------------------------------------------------------
 if "%JAVA_HOME%" == "" goto jvmNotDefined
 :gotExecute
 set APP_DIR=%~dp0
-set CURRENT_DIR=%cd%
-set PARAMETERS=%* -current_directory "%APP_DIR%" -Dhpi.base="%APP_DIR%" -Djava.util.logging.config.file="%APP_DIR%" -Dlog4j.configuration="%APP_DIR%"
-rem echo "%JAVA_HOME%\bin\java" -jar "%APP_DIR%hpi_server.jar" %PARAMETERS%
-call "%JAVA_HOME%\bin\java" -jar "%APP_DIR%javabee_engine.jar" %PARAMETERS%
+start "" "%JAVA_HOME%\bin\java" "-Dhpi.base=%APP_DIR%.." "-Dlog4j.configuration=file:%APP_DIR%..\conf\log4j.properties" -cp "%APP_DIR%hpi_server.jar" org.hpi.service.main.HPIShutdownServer
 goto end
 :jvmNotDefined
 echo JAVA_HOME not defined

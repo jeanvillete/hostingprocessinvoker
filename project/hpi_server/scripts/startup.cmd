@@ -6,7 +6,7 @@ rem ---------------------------------------------------------------------------
 if "%JAVA_HOME%" == "" goto jvmNotDefined
 :gotExecute
 set APP_DIR=%~dp0
-call "%JAVA_HOME%\bin\java" "-Dhpi.base=%APP_DIR%.." "-Dlog4j.configuration=file:%APP_DIR%..\conf\log4j.properties" -jar "%APP_DIR%hpi_server.jar"
+start "" "%JAVA_HOME%\bin\java" "-Dhpi.base=%APP_DIR%.." "-Dlog4j.configuration=file:%APP_DIR%..\conf\log4j.properties" -jar "%APP_DIR%hpi_server.jar"
 goto end
 :jvmNotDefined
 echo JAVA_HOME not defined
