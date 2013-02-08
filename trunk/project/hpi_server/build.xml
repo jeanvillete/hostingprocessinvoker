@@ -83,7 +83,7 @@
 		</pathconvert>
 		<jar jarfile="${hpi_server-jar}" basedir="${hpi_server-home}/bin">
 			<manifest>
-				<attribute name="Main-Class" value="HPIServer" />
+				<attribute name="Main-Class" value="org.hpi.service.main.HPIStartupServer" />
 				<attribute name="Class-Path" value="${libs.project}" />
 			</manifest>
 		</jar>
