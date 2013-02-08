@@ -5,9 +5,8 @@ package org.hpi.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.apache.log4j.Logger;
 import org.hpi.common.HPIConstants;
 import org.simplestructruedata.data.SSDContextManager.SSDRootObject;
 import org.simplestructruedata.entities.SSDObjectNode;
@@ -26,7 +25,7 @@ public class ServerBridge {
 	public ServerBridge() { }
 	
 	public void turnup(SSDRootObject ssdSettingsData) throws InterruptedException, IOException {
-		log.log(Level.INFO, "Turning the ServerBridge UP.");
+		log.info("Turning the ServerBridge UP.");
 		
 		// first load to invokers SSD files
 		SSDObjectNode ssdConfiguration = ssdSettingsData.getNode(HPIConstants.CONFIGURATIONS_CONFIG_SERVER);
@@ -44,7 +43,7 @@ public class ServerBridge {
 			Thread.sleep(TIME_CHECK_SHUTDOWN);
 		}
 		
-		log.log(Level.INFO, "Turning the ServerBridge DOWN.");
+		log.info("Turning the ServerBridge DOWN.");
 		serverSocketManager.interrupt();
 		serverSocket.close();
 	}

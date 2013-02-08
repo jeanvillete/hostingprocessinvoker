@@ -14,7 +14,7 @@ public interface HPIConstants {
 	String 					SSD_EXTENSION = ".ssd";
 	
 	String					CONFIGURATIONS_FILE = "hpi_data_settings" + SSD_EXTENSION;
-	String					CONFIGURATIONS_FILE_ADDRESS = System.getProperty("file.separator") + ".." + System.getProperty("file.separator") + "conf" + System.getProperty("file.separator") + CONFIGURATIONS_FILE;
+	String					CONFIGURATIONS_FILE_ADDRESS = "conf" + System.getProperty("file.separator") + CONFIGURATIONS_FILE;
 	String					CONFIGURATIONS_MAPPED_FOLDER = "mapped_folders";
 	String					CONFIGURATIONS_RELATIVE_SERVER = "relative_server";
 	String					CONFIGURATIONS_CANONICAL_PATH = "canonical_path";

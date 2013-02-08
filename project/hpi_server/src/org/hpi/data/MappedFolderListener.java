@@ -5,9 +5,8 @@ package org.hpi.data;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.apache.log4j.Logger;
 import org.hpi.data.factoy.LoadFactoryManager;
 import org.hpi.exception.HPIRuntimeException;
 
@@ -29,7 +28,7 @@ public class MappedFolderListener extends LoadFactoryManager implements DataChan
 			FileWrapper invokerFile = (FileWrapper) oldFile;
 			this.removeInvoker(new File(invokerFile.getFile().getCanonicalPath()));
 			
-			log.log(Level.INFO, "An invokerFile has been removed. File : " + invokerFile.getFile().getName());
+			log.info("An invokerFile has been removed. File : " + invokerFile.getFile().getName());
 		} catch (IOException e) {
 			throw new HPIRuntimeException(e);
 		}
@@ -41,7 +40,7 @@ public class MappedFolderListener extends LoadFactoryManager implements DataChan
 			FileWrapper invokerFile = (FileWrapper) newFile;
 			this.addInvokerFile(new File(invokerFile.getFile().getCanonicalPath()));
 			
-			log.log(Level.INFO, "A new invokerFile has been added. File : " + invokerFile.getFile().getName());
+			log.info("A new invokerFile has been added. File : " + invokerFile.getFile().getName());
 		} catch (IOException e) {
 			throw new HPIRuntimeException(e);
 		}

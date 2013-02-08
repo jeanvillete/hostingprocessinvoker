@@ -5,9 +5,8 @@ package org.hpi.data;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.apache.log4j.Logger;
 import org.hpi.common.HPIConstants;
 import org.hpi.data.factoy.LoadFactoryManager;
 import org.hpi.dialogue.protocol.entities.User;
@@ -29,8 +28,8 @@ public class InvokerDataLoader extends LoadFactoryManager {
 	
 	private static final Logger log = Logger.getLogger(InvokerDataLoader.class.getName());
 	
-	public void startup(File currentDirectory, SSDRootObject ssdSettingsData) {
-		log.log(Level.INFO, "Initializing HPI startup loader.");
+	public void startup(SSDRootObject ssdSettingsData) {
+		log.info("Initializing HPI startup loader.");
 		
 		try {
 			// load users to Factory Manager
@@ -51,8 +50,8 @@ public class InvokerDataLoader extends LoadFactoryManager {
 				SSDObjectNode ssdMappedFolder = ssdMappedFolders.getNode(i);
 				File mappedFolder = null;
 				if (ssdMappedFolder.get(HPIConstants.CONFIGURATIONS_RELATIVE_SERVER) != null) {
-					mappedFolder = new File(System.getenv(HPIConstants.ENV_HPI_BASE), 
-							".." + System.getProperty("file.separator") + 
+					mappedFolder = new File(System.getProperty(HPIConstants.ENV_HPI_BASE), 
+							System.getProperty("file.separator") + 
 							ssdMappedFolder.getLeaf(HPIConstants.CONFIGURATIONS_RELATIVE_SERVER).getValue());
 				} else if (ssdMappedFolder.get(HPIConstants.CONFIGURATIONS_CANONICAL_PATH) != null) {
 					mappedFolder = new File(ssdMappedFolder.getLeaf(HPIConstants.CONFIGURATIONS_CANONICAL_PATH).getValue());
@@ -67,7 +66,7 @@ public class InvokerDataLoader extends LoadFactoryManager {
 				folder.setIdentifier(HPIConstants.DATA_WATCHER_FOLDER_MAPPING + i);
 				folder.setCanonicalPath(mappedFolder.getCanonicalPath());
 				
-				log.log(Level.FINE, "Mapping folder to DataWatcher. Folder: " + mappedFolder.getCanonicalPath());
+				log.info("Mapping folder to DataWatcher. Folder: " + mappedFolder.getCanonicalPath());
 				
 				folder.setRegexFilter(HPIConstants.REGEX_FILE);
 				folder.setCheckChange(new CheckChange(HPIConstants.DATA_WATCHER_CRON_EXPRESSION));
@@ -75,7 +74,7 @@ public class InvokerDataLoader extends LoadFactoryManager {
 				dataWatcher.addMapping(folder);
 			}
 			
-			log.log(Level.FINE, "Starting DataWatcher.");
+			log.info("Starting DataWatcher.");
 			dataWatcher.start();
 		} catch (Exception e) {
 			throw new HPIRuntimeException(e);

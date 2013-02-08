@@ -1,8 +1,7 @@
+package org.hpi.service.main;
 import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import org.com.tatu.helper.parameter.ConsoleParameters;
+import org.apache.log4j.Logger;
 import org.hpi.common.HPIConstants;
 import org.hpi.data.InvokerDataLoader;
 import org.hpi.server.ServerBridge;
@@ -14,35 +13,24 @@ import org.simplestructruedata.data.SSDContextManager.SSDRootObject;
  * @author Jean Villete
  *
  */
-public class HPIServer {
+public class HPIStartupServer {
 
-	private static final Logger log = Logger.getLogger(HPIServer.class.getName());
+	private static final Logger log = Logger.getLogger(HPIStartupServer.class.getName());
 	
 	public static void main(String[] args) {
 		try {
-			log.log(Level.INFO, "HPI (Hosting Process Invoker) initializing.");
-			
-			File currentDirectory = new File(
-					ConsoleParameters.getInstance(args).getValue(HPIConstants.CONSOLE_PARAMETER_CURRENT_DIR, true).trim());
-			if (!currentDirectory.exists() || !currentDirectory.isDirectory()) {
-				throw new IllegalArgumentException("The directory " + currentDirectory.getCanonicalPath() 
-						+ " either doesn't exist or it isn't a directory.");
-			}
-			
-			log.log(Level.INFO, currentDirectory.getPath());
+			log.info("HPI (Hosting Process Invoker) initializing.");
 			
 			// getting the settings file and its data to SSD context manager
-			File settingsFile = new File(currentDirectory, HPIConstants.CONFIGURATIONS_FILE_ADDRESS);
+			File settingsFile = new File(System.getProperty(HPIConstants.ENV_HPI_BASE) + System.getProperty("file.separator"), HPIConstants.CONFIGURATIONS_FILE_ADDRESS);
 			
-			log.log(Level.INFO, settingsFile.getPath());
-			
-			log.log(Level.INFO, "Looking for data settings at: " + settingsFile.getCanonicalPath());
+			log.info( "Looking for data settings at: " + settingsFile.getCanonicalPath());
 			SSDContextManager ssdCtx = SSDContextManager.build(settingsFile);
 			SSDRootObject ssdSettingsData = ssdCtx.getRootObject();
 			
 			// load the configuration and first data to FactoryManager and as well instatiating the data watcher to invokers folders
 			InvokerDataLoader dataLoader = new InvokerDataLoader();
-			dataLoader.startup(currentDirectory, ssdSettingsData);
+			dataLoader.startup(ssdSettingsData);
 			
 			// getting the keep session time alive to session manager startup
 			int keepSessionAlive = Integer.parseInt(
@@ -56,10 +44,10 @@ public class HPIServer {
 			ServerBridge serverBridge = new ServerBridge();
 			serverBridge.turnup(ssdSettingsData);
 			
-			log.log(Level.INFO, "HPI finalizing successfully.");
+			log.info("HPI finalizing successfully.");
 		} catch (Exception e) {
-			log.log(Level.SEVERE, e.getMessage());
-			log.log(Level.SEVERE, "A severe exception has happend and it's forcing HPI down!");
+			log.error(e);
+			log.error("A severe exception has happend and it's forcing HPI down!");
 			System.exit(1);
 		}
 		System.exit(0);

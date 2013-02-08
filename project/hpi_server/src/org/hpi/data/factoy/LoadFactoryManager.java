@@ -4,9 +4,8 @@
 package org.hpi.data.factoy;
 
 import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.apache.log4j.Logger;
 import org.com.tatu.helper.FileHelper;
 import org.hpi.common.HPIConstants;
 import org.hpi.dialogue.protocol.entities.Executable;
@@ -46,7 +45,7 @@ public abstract class LoadFactoryManager {
 			throw new IllegalArgumentException("The invokerFile is null or isn't a valid file.");
 		}
 		
-		log.log(Level.FINE, "Adding a new invokerFile: " + invokerFile.getName());
+		log.info("Adding a new invokerFile: " + invokerFile.getName());
 		
 		SSDContextManager ssdCtx = SSDContextManager.build(invokerFile);
 		SSDRootObject root = ssdCtx.getRootObject();
@@ -83,7 +82,7 @@ public abstract class LoadFactoryManager {
 			throw new IllegalArgumentException("The invokerFile is null or isn't a valid file.");
 		}
 		
-		log.log(Level.FINE, "Removing an invokerFile: " + invokerFile.getName());
+		log.info("Removing an invokerFile: " + invokerFile.getName());
 		
 		HPIDataFactory.getInstance().removeInvoker(FileHelper.removeExtension(invokerFile.getName()));
 	}
