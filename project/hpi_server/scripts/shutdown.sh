@@ -1,15 +1,18 @@
 # ---------------------------------------------------------------------------
-# Script to invoke the JavaBee Org App on Linux Platform
-# 2012 12 29
+# Script to Shutdown the Hosting Process Invoker on Linux Platform
+# 2013 02 11
 # ---------------------------------------------------------------------------
-if [ -z "$JAVA_HOME" -a -z "$JRE_HOME" ]; then
+if [ -z "$JAVA_HOME" ]; then
   echo "JAVA_HOME not defined"
   echo "No valid value was defined to JAVA_HOME environment variable, please, do it before!"
   exit 1
 fi
 
-APP_BIN_DIR=$(readlink -f $(dirname $0))
-CURRENT_DIR="$PWD/"
-PARAMETERS="$* -current_directory $CURRENT_DIR"
+APP_BIN=$(readlink -f $(dirname $0))
+JVM_PARAMETERS="-Dhpi.base=$APP_BIN/.. -Dlog4j.configuration=file:$APP_BIN/../conf/log4j.properties"
 
-exec "$JAVA_HOME"/bin/java -jar "$APP_BIN_DIR"/javabee_engine.jar $PARAMETERS
+echo "Using JAVA_HOME:        $JAVA_HOME"
+echo "HPI Server Directory:   $APP_BIN"
+echo "JVM Parameters:         $JVM_PARAMETERS"
+
+exec "$JAVA_HOME"/bin/java $JVM_PARAMETERS -cp "$APP_BIN"/hpi_server.jar org.hpi.service.main.HPIShutdownServer
