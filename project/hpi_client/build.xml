@@ -1,0 +1,80 @@
+<project name="hpi_client" default="dist-hpi_client" basedir=".">
+	
+	<tstamp>
+		<format property="day" pattern="yyyyMMdd.HHmm"/>
+	</tstamp>
+	
+	<property name="hpi_client" value="${ant.project.name}"/>
+	<property name="hpi_client-home" value="../${hpi_client}"/>
+	<property name="hpi_client-home-dist" value="${hpi_client-home}/dist"/>
+	<property name="hpi_client-home-temp" value="${hpi_client-home-dist}/temp/"/>
+	<property name="hpi_client-home-temp-project" value="${hpi_client-home-temp}/${ant.project.name}"/>
+	<property name="hpi_client-home-temp-src" value="${hpi_client-home-temp-project}/src"/>
+	
+	<!-- mandatory app directories -->
+	<property name="hpi_client-home-temp-bin" value="${hpi_client-home-temp-project}/bin"/>
+	<property name="hpi_client-home-temp-dependencies" value="${hpi_client-home-temp-bin}/dependencies"/>
+	
+	<property name="hpi_client-jar" value="${hpi_client-home-temp-project}/bin/${hpi_client}.jar"/>
+	<property name="hpi_client-zip" value="${hpi_client-home-dist}/${hpi_client}.${day}.zip"/>
+	
+	<target name="dist-hpi_client">
+		<!-- create required directories -->
+		<mkdir dir="${hpi_client-home-temp-project}"/>
+		<mkdir dir="${hpi_client-home-temp-src}"/>
+		<mkdir dir="${hpi_client-home-temp-dependencies}"/>
+		
+		<!-- copy the main src code -->
+		<copy todir="${hpi_client-home-temp-src}">
+			<fileset dir="${hpi_client-home}/src"/>
+		</copy>
+		<!-- copy the scripts -->
+		<copy todir="${hpi_client-home-temp-bin}">
+			<fileset dir="${hpi_client-home}/scripts"/>
+		</copy>
+		<!-- copy dependencies -->
+		<copy todir="${hpi_client-home-temp-dependencies}">
+			<fileset dir="${hpi_client-home}/dependencies"/>
+		</copy>
+		
+		<!-- compile the src tmp directory with the correct version and release data -->
+		<javac srcdir="${hpi_client-home-temp-src}" destdir="${hpi_client-home}/bin" debug="yes" includeantruntime="false">
+			<classpath>
+				<fileset dir="${hpi_client-home-temp-dependencies}">
+					<include name="**/*.jar"/>
+				</fileset>
+			</classpath>
+		</javac>
+		
+		<!-- genereting hpi_client jar file -->
+		<!-- create a property containing all .jar files, prefix lib/, and seperated with a space -->
+		<pathconvert property="libs.project" pathsep=" ">
+			<mapper>
+				<chainedmapper>
+					<flattenmapper />
+					<globmapper from="*" to="dependencies/*" />
+				</chainedmapper>
+			</mapper>
+			<path>
+				<fileset dir="${hpi_client-home-temp-dependencies}">
+					<include name="**/*.jar" />
+				</fileset>
+			</path>
+		</pathconvert>
+		<jar jarfile="${hpi_client-jar}" basedir="${hpi_client-home}/bin">
+			<manifest>
+				<attribute name="Main-Class" value="org.hpi.service.main.HPIClient" />
+				<attribute name="Class-Path" value="${libs.project}" />
+			</manifest>
+		</jar>
+		
+		<!-- delete the source tmp directory -->
+		<delete dir="${hpi_client-home-temp-src}"/>
+		
+		<zip destfile="${hpi_client-zip}">
+		    <zipfileset dir="${hpi_client-home-temp}" />
+		</zip>
+		
+		<delete dir="${hpi_client-home-temp}"/>
+	</target>
+</project>
