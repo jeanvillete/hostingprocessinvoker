@@ -3,12 +3,9 @@
  */
 package org.hpi.dialogue.protocol.service;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import org.hpi.dialogue.protocol.HPIDialogueProtocol;
 import org.hpi.dialogue.protocol.entities.User;
 import org.hpi.dialogue.protocol.request.DescribeInvokerRequest;
 import org.hpi.dialogue.protocol.request.ExecuteInvokerRequest;
@@ -40,23 +37,17 @@ public class HPIClientProtocol extends HPIServiceProtocol {
 		this.portNumber = portNumber;
 	}
 	
-	private Response doWriteAndGetResponse(Request request) {
+	private Response writeAndGetResponse(Request request) {
 		try {
 			// initiating the socket
 			this.setSocket(new Socket(this.serverAddress, this.portNumber));
-			
-			// initiating the writer
-			BufferedOutputStream bufferedOutput = new BufferedOutputStream(this.getSocket().getOutputStream());
-			this.setWriter(new ObjectOutputStream(bufferedOutput));
-			this.getWriter().writeObject(request);
+			this.writeAMessage(request.getSSDServiceMessage().toString(false));
 			this.getWriter().flush();
 
-			// initiating the reader
-			BufferedInputStream bufferedInput = new BufferedInputStream(this.getSocket().getInputStream());
-			this.setReader(new ObjectInputStream(bufferedInput));
-			
-			// deserializing the object from server
-			Response response = (Response) this.getReader().readObject();
+			// initiating the reader and reading the response from the server
+			this.setReader(this.getSocket().getInputStream());
+			String serverMessage = this.readMessage();
+			Response response = (Response) HPIDialogueProtocol.parseMessage(serverMessage);
 			
 			// closing the connections
 			this.closeSocket();
@@ -69,26 +60,26 @@ public class HPIClientProtocol extends HPIServiceProtocol {
 	}
 	
 	public ServerShutdownResponse serverShutdown() {
-		return (ServerShutdownResponse) this.doWriteAndGetResponse(new ServerShutdownRequest());
+		return (ServerShutdownResponse) this.writeAndGetResponse(new ServerShutdownRequest());
 	}
 	
 	public LoginResponse doLogin(User user) {
-		return (LoginResponse) this.doWriteAndGetResponse(new LoginRequest(user));
+		return (LoginResponse) this.writeAndGetResponse(new LoginRequest(user));
 	}
 	
 	public ListInvokersResponse listInvokers(String sessionId) {
-		return (ListInvokersResponse) this.doWriteAndGetResponse(new ListInvokersRequest(sessionId));
+		return (ListInvokersResponse) this.writeAndGetResponse(new ListInvokersRequest(sessionId));
 	}
 	
 	public DescribeInvokerResponse describeInvoker(String sessionId, String invokeId) {
-		return (DescribeInvokerResponse) this.doWriteAndGetResponse(new DescribeInvokerRequest(sessionId, invokeId));
+		return (DescribeInvokerResponse) this.writeAndGetResponse(new DescribeInvokerRequest(sessionId, invokeId));
 	}
 	
 	public ExecuteInvokerResponse executeInvoker(String sessionId, String invokeId) {
-		return (ExecuteInvokerResponse) this.doWriteAndGetResponse(new ExecuteInvokerRequest(sessionId, invokeId));
+		return (ExecuteInvokerResponse) this.writeAndGetResponse(new ExecuteInvokerRequest(sessionId, invokeId));
 	}
 	
 	public LogoffResponse doLogoff(String sessionId) {
-		return (LogoffResponse) this.doWriteAndGetResponse(new LogoffRequest(sessionId));
+		return (LogoffResponse) this.writeAndGetResponse(new LogoffRequest(sessionId));
 	}
 }

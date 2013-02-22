@@ -3,6 +3,10 @@
  */
 package org.hpi.dialogue.protocol.response;
 
+import org.hpi.dialogue.protocol.common.HPIDialogueConstants;
+import org.simplestructruedata.entities.SSDObjectLeaf;
+import org.simplestructruedata.entities.SSDObjectNode;
+
 /**
  * @author Jean Villete
  *
@@ -17,9 +21,22 @@ public class LoginResponse extends Response {
 		super(message, status);
 		this.sessionId = sessionId;
 	}
+	
+	@Override
+	public String getServiceName() {
+		return HPIDialogueConstants.LOGIN_SERVICE;
+	}
 
+	@Override
+	public SSDObjectNode getSSDParameters() {
+		SSDObjectNode parameters = new SSDObjectNode(HPIDialogueConstants.PARAMETERS);
+		parameters.addAttribute(new SSDObjectLeaf(HPIDialogueConstants.SESSION_ID, this.getSessionId()));
+		return parameters;
+	}
+	
 	// GETTERS AND SETTERS //
 	public String getSessionId() {
 		return sessionId;
 	}
+
 }
