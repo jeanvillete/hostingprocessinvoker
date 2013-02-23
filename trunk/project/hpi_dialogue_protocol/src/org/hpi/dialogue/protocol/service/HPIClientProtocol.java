@@ -41,6 +41,8 @@ public class HPIClientProtocol extends HPIServiceProtocol {
 		try {
 			// initiating the socket
 			this.setSocket(new Socket(this.serverAddress, this.portNumber));
+			this.setWriter(this.getSocket().getOutputStream());
+			
 			this.writeAMessage(request.getSSDServiceMessage().toString(false));
 			this.getWriter().flush();
 

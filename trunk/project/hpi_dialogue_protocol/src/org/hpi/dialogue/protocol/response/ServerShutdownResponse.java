@@ -20,7 +20,7 @@ public class ServerShutdownResponse extends Response {
 
 	@Override
 	public String getServiceName() {
-		return HPIDialogueConstants.SHUTDOWN_SERVER_SERVICE;
+		return HPIDialogueConstants.SERVER_SHUTDOWN_SERVICE;
 	}
 	
 	@Override
