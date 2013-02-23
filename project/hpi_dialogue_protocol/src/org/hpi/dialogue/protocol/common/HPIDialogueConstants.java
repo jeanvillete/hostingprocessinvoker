@@ -15,7 +15,7 @@ public interface HPIDialogueConstants {
 	String 				EXECUTE_INVOKER_SERVICE = "executeInvoker";
 	String 				LIST_INVOKERS_SERVICE = "listInvokers";
 	String				LOGOFF_SERVICE = "logoff";
-	String				SHUTDOWN_SERVER_SERVICE = "shutdownServer";
+	String				SERVER_SHUTDOWN_SERVICE = "serverShutdown";
 	
 	String 				HPI_MESSAGE = "hpi_message";
 	String 				SERVICE_TYPE = "service_type";

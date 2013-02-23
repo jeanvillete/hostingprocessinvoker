@@ -1,11 +1,8 @@
 package org.hpi.dialogue.protocol.service;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import org.hpi.dialogue.protocol.HPIDialogueProtocol;
 import org.hpi.dialogue.protocol.request.Request;
 import org.hpi.dialogue.protocol.response.Response;
 
@@ -23,13 +20,11 @@ public class HPIServerProtocol extends HPIServiceProtocol {
 	public Request readRequest() {
 		try {
 			// initiating the reader
-			if (this.getReader() == null) {
-				BufferedInputStream bufferedInput = new BufferedInputStream(this.getSocket().getInputStream());
-				this.setReader(new ObjectInputStream(bufferedInput));
-			}
+			this.setReader(this.getSocket().getInputStream());
+			String clientMessage = this.readMessage();
 
 			// reading the serialized object
-			return (Request) this.getReader().readObject();
+			return (Request) HPIDialogueProtocol.parseMessage(clientMessage);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -38,13 +33,10 @@ public class HPIServerProtocol extends HPIServiceProtocol {
 	public void writeResponse(Response response) {
 		try {
 			// initiating the writer
-			if (this.getWriter() == null) {
-				BufferedOutputStream bufferedOutput = new BufferedOutputStream(this.getSocket().getOutputStream());
-				this.setWriter(new ObjectOutputStream(bufferedOutput));
-			}
+			this.setWriter(this.getSocket().getOutputStream());
 			
 			// printing the serialized object
-			this.getWriter().writeObject(response);
+			this.writeAMessage(response.getSSDServiceMessage().toString(false));
 			
 			// releasing the stream flush
 			this.getWriter().flush();
