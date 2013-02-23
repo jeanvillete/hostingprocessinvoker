@@ -9,6 +9,6 @@
 	<classpathentry kind="lib" path="dependencies/slf4j-api-1.6.1.jar"/>
 	<classpathentry kind="lib" path="dependencies/tatu.20130201.1323.jar"/>
 	<classpathentry kind="lib" path="dependencies/String_SimpleStructureData.20130202.1458.jar"/>
-	<classpathentry kind="lib" path="dependencies/hpi_dialogue_protocol.20130207.1443.jar" sourcepath="/hpi_dialogue_protocol"/>
+	<classpathentry kind="lib" path="dependencies/hpi_dialogue_protocol.20130223.1737.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
