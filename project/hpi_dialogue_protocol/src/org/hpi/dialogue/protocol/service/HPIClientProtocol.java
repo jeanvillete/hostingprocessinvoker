@@ -57,7 +57,7 @@ public class HPIClientProtocol extends HPIServiceProtocol {
 			// return the retrieved response
 			return response;
 		} catch (Exception e) {
-			throw new RuntimeException();
+			throw new RuntimeException(e);
 		}
 	}
 	
