@@ -1,3 +1,5 @@
+package org.hpi.mid.ui;
+
 
 import javax.microedition.midlet.*;
 import javax.microedition.lcdui.*;
@@ -16,6 +18,7 @@ public class HPIMidClient extends MIDlet implements CommandListener {
     private Command exitCommand;
     private Command itemCommand;
     private Form form;
+    private User userLogged;
 
     private TextField serverAddress, portNumber, user, password;
     
@@ -107,9 +110,10 @@ public class HPIMidClient extends MIDlet implements CommandListener {
         public void run() {
             try {
                 this.validate();
-                
+                userLogged = new User(user.getString(), password.getString());
+                        
                 HPIClientProtocol clientProtocol = new HPIClientProtocol(serverAddress.getString(), Integer.parseInt(portNumber.getString()));
-                LoginResponse loginResponse = clientProtocol.doLogin(new User(user.getString(), password.getString()));
+                LoginResponse loginResponse = clientProtocol.doLogin(userLogged);
 
                 a = new Alert("Server Message", loginResponse.getMessage(), null, AlertType.INFO);
                 a.setTimeout(Alert.FOREVER);
@@ -122,6 +126,10 @@ public class HPIMidClient extends MIDlet implements CommandListener {
                 getDisplay().setCurrent(a);
             }
         }
+    }
+    
+    public User getUser() {
+        return this.userLogged;
     }
     
     /**
