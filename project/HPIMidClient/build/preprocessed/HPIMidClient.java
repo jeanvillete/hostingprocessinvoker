@@ -150,8 +150,6 @@ public class HPIMidClient extends MIDlet implements CommandListener {
             this.user = new TextField("User", "", 32, TextField.ANY);
             this.password = new TextField("Password", "", 32, TextField.PASSWORD);
             
-            
-            // write pre-init user code here
             form = new Form("HPI Client", 
                 new Item[]{
                     this.serverAddress,
@@ -163,7 +161,6 @@ public class HPIMidClient extends MIDlet implements CommandListener {
             form.addCommand(getExitCommand());
             form.addCommand(getItemCommand());
             form.setCommandListener(this);                                  
-            // write post-init user code here
         }                         
         return form;
     }
