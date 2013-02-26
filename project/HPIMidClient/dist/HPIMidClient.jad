@@ -1,5 +1,5 @@
-MIDlet-1: HPIMidClient,,HPIMidClient
-MIDlet-Jar-Size: 45063
+MIDlet-1: HPIMidClient,,org.hpi.mid.ui.HPIMidClient
+MIDlet-Jar-Size: 49526
 MIDlet-Jar-URL: HPIMidClient.jar
 MIDlet-Name: HPIMidClient
 MIDlet-Vendor: Vendor

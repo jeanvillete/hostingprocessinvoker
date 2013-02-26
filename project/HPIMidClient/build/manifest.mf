@@ -1,4 +1,4 @@
-MIDlet-1: HPIMidClient,,HPIMidClient
+MIDlet-1: HPIMidClient,,org.hpi.mid.ui.HPIMidClient
 MIDlet-Vendor: Vendor
 MIDlet-Name: HPIMidClient
 MIDlet-Version: 1.0

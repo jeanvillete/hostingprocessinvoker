@@ -17,53 +17,37 @@ import org.hpi.dialogue.protocol.service.HPIClientProtocol;
  *
  * @author villjea
  */
-public class HPIUiDashBoard extends HPICommonUi {
+public class HPIUiShutdownServer extends HPICommonUi {
 
-    private StringItem      sessionStatus, sessionId, userLogged;
-    private Command         cmdBack, cmdListInvokers, cmdShutdownServer;
-    private LoginResponse   loginResponse;
-    private User            userLoggedU;
-    private HPIMidClient    parent;
-    
-    HPIUiDashBoard(HPIMidClient parent, Form parentForm) {
-        super(parentForm, new Form("HPI Client"), Display.getDisplay(parent),
-                new TemporaryMessage("Requestiing Server", "Wait until server checks your credentials."));
-        
-        this.parent = parent;
-        this.notify();
+    HPIUiShutdownServer(MIDlet parent) {
+        super(parent, new Form("HPI Shutdown Server"), new TemporaryMessage("Requestiing Server", "Wait until server checks your Shutdown Server request."));
     }
     
     public void commandAction(Command c, Displayable d) {
         if (c == this.cmdBack) {
-            this.parent.switchDisplayable();
+            HPIMidClient parent = (HPIMidClient) this.getParent();
+            parent.switchDisplayable(null, parent.getForm());
         } else if (c == this.cmdListInvokers) {
             
         } else if (c == this.cmdShutdownServer) {
-            // new HPIUiShutdownServer(this.getForm());
+            
         }
     }
     
-    void validate() {
-        if (!HPIUtil.isStringOk(this.parent.getServerAddress().getString()) ||
-                !HPIUtil.isStringOk(this.parent.getPortNumber().getString()) ||
-                !HPIUtil.isStringOk(this.parent.getUser().getString()) ||
-                !HPIUtil.isStringOk(this.parent.getPassword().getString())) {
-            throw new RuntimeException("All fiedls are required!");
-        }
+    private HPIMidClient getConcretParent() {
+        return (HPIMidClient) this.getParent();
     }
     
     public void run() {
         try {
-            this.wait();
-            
             this.validate();
 
-            String serverAddress = this.parent.getServerAddress().getString();
-            int portNumber = Integer.parseInt(this.parent.getPortNumber().getString());
+            String serverAddress = this.getConcretParent().getServerAddress().getString();
+            int portNumber = Integer.parseInt(this.getConcretParent().getPortNumber().getString());
             HPIClientProtocol clientProtocol = new HPIClientProtocol(serverAddress, portNumber);
 
-            String nickname = this.parent.getUser().getString();
-            String password = this.parent.getPassword().getString();
+            String nickname = this.getConcretParent().getUser().getString();
+            String password = this.getConcretParent().getPassword().getString();
             this.userLoggedU = new User(nickname, password);
 
             this.loginResponse = clientProtocol.doLogin(this.userLoggedU);
@@ -94,7 +78,7 @@ public class HPIUiDashBoard extends HPICommonUi {
         } catch (Exception e) {
             Alert a = new Alert("Server Message", e.getMessage(), null, AlertType.ERROR);
             a.setTimeout(Alert.FOREVER);
-            a.setCommandListener(this.parent);
+            a.setCommandListener(this.getConcretParent());
             getDisplay().setCurrent(a);
         }
     }
