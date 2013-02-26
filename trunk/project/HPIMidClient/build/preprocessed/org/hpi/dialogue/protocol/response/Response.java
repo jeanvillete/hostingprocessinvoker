@@ -26,6 +26,10 @@ public abstract class Response extends HPIDialogueProtocol {
             this.value = value;
         }
         
+        public boolean equals(Object obj) {
+            return this.value.equals(obj);
+        }
+        
         private String value;
         
         public String getValue() {

@@ -1,9 +1,12 @@
+package org.hpi.mid.ui;
+
 
 import javax.microedition.midlet.*;
 import javax.microedition.lcdui.*;
 import org.hpi.dialogue.protocol.common.HPIUtil;
 import org.hpi.dialogue.protocol.entities.User;
 import org.hpi.dialogue.protocol.response.LoginResponse;
+import org.hpi.dialogue.protocol.response.Response;
 import org.hpi.dialogue.protocol.service.HPIClientProtocol;
 
 /**
@@ -12,12 +15,44 @@ import org.hpi.dialogue.protocol.service.HPIClientProtocol;
 public class HPIMidClient extends MIDlet implements CommandListener {
     
     private boolean midletPaused = false;
-    private Alert a;
     private Command exitCommand;
     private Command itemCommand;
     private Form form;
+    
 
     private TextField serverAddress, portNumber, user, password;
+
+    public TextField getPassword() {
+        return password;
+    }
+
+    public void setPassword(TextField password) {
+        this.password = password;
+    }
+
+    public TextField getPortNumber() {
+        return portNumber;
+    }
+
+    public void setPortNumber(TextField portNumber) {
+        this.portNumber = portNumber;
+    }
+
+    public TextField getServerAddress() {
+        return serverAddress;
+    }
+
+    public void setServerAddress(TextField serverAddress) {
+        this.serverAddress = serverAddress;
+    }
+
+    public TextField getUser() {
+        return user;
+    }
+
+    public void setUser(TextField user) {
+        this.user = user;
+    }
     
     /**
      * The HelloMIDlet constructor.
@@ -78,51 +113,15 @@ public class HPIMidClient extends MIDlet implements CommandListener {
         if (displayable == form) {                                           
             if (command == exitCommand) {                                         
                 exitMIDlet();                                           
-            } else if (command == itemCommand) {                                          
-                new CommunicationThread(this).start();
+            } else if (command == itemCommand) {
+                
+                new HPIUiDashBoard(this);
             }
         }
         if (command == Alert.DISMISS_COMMAND) {
             switchDisplayable(null, getForm());
         }
     }                               
-    
-    private class CommunicationThread extends Thread {
-        
-        private HPIMidClient parent = null;
-        
-        private CommunicationThread(HPIMidClient parent) {
-            this.parent = parent;
-        }
-        
-        void validate() {
-            if (!HPIUtil.isStringOk(serverAddress.getString()) ||
-                    !HPIUtil.isStringOk(portNumber.getString()) ||
-                    !HPIUtil.isStringOk(user.getString()) ||
-                    !HPIUtil.isStringOk(password.getString())) {
-                throw new RuntimeException("All fiedls are required!");
-            }
-        }
-        
-        public void run() {
-            try {
-                this.validate();
-                
-                HPIClientProtocol clientProtocol = new HPIClientProtocol(serverAddress.getString(), Integer.parseInt(portNumber.getString()));
-                LoginResponse loginResponse = clientProtocol.doLogin(new User(user.getString(), password.getString()));
-
-                a = new Alert("Server Message", loginResponse.getMessage(), null, AlertType.INFO);
-                a.setTimeout(Alert.FOREVER);
-                a.setCommandListener(this.parent);
-                getDisplay().setCurrent(a);
-            } catch (RuntimeException e) {
-                a = new Alert("Server Message", e.getMessage(), null, AlertType.ERROR);
-                a.setTimeout(Alert.FOREVER);
-                a.setCommandListener(this.parent);
-                getDisplay().setCurrent(a);
-            }
-        }
-    }
     
     /**
      * Returns an initialized instance of exitCommand component.
