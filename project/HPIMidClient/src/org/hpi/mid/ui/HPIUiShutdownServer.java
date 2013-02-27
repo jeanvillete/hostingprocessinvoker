@@ -11,6 +11,7 @@ import org.hpi.dialogue.protocol.common.HPIUtil;
 import org.hpi.dialogue.protocol.entities.User;
 import org.hpi.dialogue.protocol.response.LoginResponse;
 import org.hpi.dialogue.protocol.response.Response;
+import org.hpi.dialogue.protocol.response.ServerShutdownResponse;
 import org.hpi.dialogue.protocol.service.HPIClientProtocol;
 
 /**
@@ -19,67 +20,36 @@ import org.hpi.dialogue.protocol.service.HPIClientProtocol;
  */
 public class HPIUiShutdownServer extends HPICommonUi {
 
-    HPIUiShutdownServer(MIDlet parent) {
-        super(parent, new Form("HPI Shutdown Server"), new TemporaryMessage("Requestiing Server", "Wait until server checks your Shutdown Server request."));
-    }
-    
-    public void commandAction(Command c, Displayable d) {
-        if (c == this.cmdBack) {
-            HPIMidClient parent = (HPIMidClient) this.getParent();
-            parent.switchDisplayable(null, parent.getForm());
-        } else if (c == this.cmdListInvokers) {
-            
-        } else if (c == this.cmdShutdownServer) {
-            
-        }
-    }
-    
-    private HPIMidClient getConcretParent() {
-        return (HPIMidClient) this.getParent();
+    private HPIUiDashBoard          parent;
+        
+    HPIUiShutdownServer(HPIUiDashBoard parent) {
+        super(parent.getForm(), new Form("HPI Shutdown Server"), parent.getDisplay(),
+                new TemporaryMessage("Requesting Server", "Wait until server process the Shutdown Request."));
+        this.parent = parent;
     }
     
     public void run() {
+        Alert a = null;
         try {
-            this.validate();
-
-            String serverAddress = this.getConcretParent().getServerAddress().getString();
-            int portNumber = Integer.parseInt(this.getConcretParent().getPortNumber().getString());
-            HPIClientProtocol clientProtocol = new HPIClientProtocol(serverAddress, portNumber);
-
-            String nickname = this.getConcretParent().getUser().getString();
-            String password = this.getConcretParent().getPassword().getString();
-            this.userLoggedU = new User(nickname, password);
-
-            this.loginResponse = clientProtocol.doLogin(this.userLoggedU);
-
-            if (loginResponse.getStatus().equals(Response.Status.SUCCESS)) {
-                this.sessionStatus = new StringItem("Session started at: ",  new Date().toString());
-                this.sessionId = new StringItem("Session Id: ",  this.loginResponse.getSessionId());
-                this.userLogged = new StringItem("User logged: ", this.userLoggedU.getNickname());
-
-                this.cmdBack = new Command("Close Session", Command.EXIT, 2);
-                this.cmdListInvokers = new Command("List Invokers", Command.ITEM, 1);
-                this.cmdShutdownServer = new Command("Shutdown Server", Command.ITEM, 2);
-
-                this.getForm().append(this.sessionStatus);
-                this.getForm().append(this.sessionId);
-                this.getForm().append(this.userLogged);
-
-                this.getForm().addCommand(this.cmdBack);
-                this.getForm().addCommand(this.cmdListInvokers);
-                this.getForm().addCommand(this.cmdShutdownServer);
-
-                this.getForm().setCommandListener(this);
-
-                this.getDisplay().setCurrent(this.getForm());
+            ServerShutdownResponse shutdownResponse = this.parent.getHPIClientProtocol().serverShutdown();
+            
+            if (shutdownResponse.getStatus().equals(Response.Status.SUCCESS)) {
+                a = new Alert("Shutdown Server Message", shutdownResponse.getMessage(), null, AlertType.INFO);
             } else {
-                throw new RuntimeException(loginResponse.getMessage());
+                a = new Alert("Server Message", shutdownResponse.getMessage(), null, AlertType.ERROR);
             }
         } catch (Exception e) {
-            Alert a = new Alert("Server Message", e.getMessage(), null, AlertType.ERROR);
-            a.setTimeout(Alert.FOREVER);
-            a.setCommandListener(this.getConcretParent());
-            getDisplay().setCurrent(a);
+            a = new Alert("Processing Error Message", e.getMessage(), null, AlertType.ERROR);
+        }
+        a.setTimeout(Alert.FOREVER);
+        a.setCommandListener(this);
+        getDisplay().setCurrent(a);
+    }
+    
+    public void commandAction(Command c, Displayable d) {
+        if (c == Alert.DISMISS_COMMAND) {
+            this.getDisplay().setCurrent(this.parent.getForm());
         }
     }
+    
 }
