@@ -118,7 +118,7 @@ public class HPIMidClient extends MIDlet implements CommandListener {
             if (command == exitCommand) {                                         
                 exitMIDlet();                                           
             } else if (command == itemCommand) {
-                new HPIUiDashBoard(this, this.getForm());
+                new HPIUiDashBoard(this);
             }
         }
         if (command == Alert.DISMISS_COMMAND) {

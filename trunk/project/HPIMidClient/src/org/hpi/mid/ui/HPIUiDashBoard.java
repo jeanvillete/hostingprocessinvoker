@@ -19,18 +19,17 @@ import org.hpi.dialogue.protocol.service.HPIClientProtocol;
  */
 public class HPIUiDashBoard extends HPICommonUi {
 
-    private StringItem      sessionStatus, sessionId, userLogged;
-    private Command         cmdBack, cmdListInvokers, cmdShutdownServer;
-    private LoginResponse   loginResponse;
-    private User            userLoggedU;
-    private HPIMidClient    parent;
+    private StringItem              lblSessionStatus, lblSessionId, lblUserLogged;
+    private Command                 cmdBack, cmdListInvokers, cmdShutdownServer;
+    private LoginResponse           loginResponse;
+    private User                    loggedUser;
+    private HPIMidClient            parent;
+    private HPIClientProtocol       clientProtocol;
     
-    HPIUiDashBoard(HPIMidClient parent, Form parentForm) {
-        super(parentForm, new Form("HPI Client"), Display.getDisplay(parent),
-                new TemporaryMessage("Requestiing Server", "Wait until server checks your credentials."));
-        
+    HPIUiDashBoard(HPIMidClient parent) {
+        super(parent.getForm(), new Form("HPI Client"), Display.getDisplay(parent),
+                new TemporaryMessage("Requesting Server", "Wait until server checks your credentials."));
         this.parent = parent;
-        this.notify();
     }
     
     public void commandAction(Command c, Displayable d) {
@@ -39,7 +38,7 @@ public class HPIUiDashBoard extends HPICommonUi {
         } else if (c == this.cmdListInvokers) {
             
         } else if (c == this.cmdShutdownServer) {
-            // new HPIUiShutdownServer(this.getForm());
+            new HPIUiShutdownServer(this);
         }
     }
     
@@ -54,32 +53,30 @@ public class HPIUiDashBoard extends HPICommonUi {
     
     public void run() {
         try {
-            this.wait();
-            
             this.validate();
 
             String serverAddress = this.parent.getServerAddress().getString();
             int portNumber = Integer.parseInt(this.parent.getPortNumber().getString());
-            HPIClientProtocol clientProtocol = new HPIClientProtocol(serverAddress, portNumber);
+            this.clientProtocol = new HPIClientProtocol(serverAddress, portNumber);
 
             String nickname = this.parent.getUser().getString();
             String password = this.parent.getPassword().getString();
-            this.userLoggedU = new User(nickname, password);
+            this.loggedUser = new User(nickname, password);
 
-            this.loginResponse = clientProtocol.doLogin(this.userLoggedU);
+            this.loginResponse = this.clientProtocol.doLogin(this.loggedUser);
 
             if (loginResponse.getStatus().equals(Response.Status.SUCCESS)) {
-                this.sessionStatus = new StringItem("Session started at: ",  new Date().toString());
-                this.sessionId = new StringItem("Session Id: ",  this.loginResponse.getSessionId());
-                this.userLogged = new StringItem("User logged: ", this.userLoggedU.getNickname());
+                this.lblSessionStatus = new StringItem("Session started at: ",  new Date().toString());
+                this.lblSessionId = new StringItem("Session Id: ",  this.loginResponse.getSessionId());
+                this.lblUserLogged = new StringItem("User logged: ", this.loggedUser.getNickname());
 
                 this.cmdBack = new Command("Close Session", Command.EXIT, 2);
                 this.cmdListInvokers = new Command("List Invokers", Command.ITEM, 1);
                 this.cmdShutdownServer = new Command("Shutdown Server", Command.ITEM, 2);
 
-                this.getForm().append(this.sessionStatus);
-                this.getForm().append(this.sessionId);
-                this.getForm().append(this.userLogged);
+                this.getForm().append(this.lblSessionStatus);
+                this.getForm().append(this.lblSessionId);
+                this.getForm().append(this.lblUserLogged);
 
                 this.getForm().addCommand(this.cmdBack);
                 this.getForm().addCommand(this.cmdListInvokers);
@@ -97,5 +94,9 @@ public class HPIUiDashBoard extends HPICommonUi {
             a.setCommandListener(this.parent);
             getDisplay().setCurrent(a);
         }
+    }
+    
+    public HPIClientProtocol getHPIClientProtocol() {
+        return this.clientProtocol;
     }
 }
