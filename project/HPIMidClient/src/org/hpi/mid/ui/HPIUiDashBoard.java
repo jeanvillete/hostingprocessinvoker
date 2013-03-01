@@ -36,7 +36,7 @@ public class HPIUiDashBoard extends HPICommonUi {
         if (c == this.cmdBack) {
             this.parent.switchDisplayable();
         } else if (c == this.cmdListInvokers) {
-            
+            new HPIUiListInvokers(this);
         } else if (c == this.cmdShutdownServer) {
             new HPIUiShutdownServer(this);
         }
@@ -92,11 +92,15 @@ public class HPIUiDashBoard extends HPICommonUi {
             Alert a = new Alert("Server Message", e.getMessage(), null, AlertType.ERROR);
             a.setTimeout(Alert.FOREVER);
             a.setCommandListener(this.parent);
-            getDisplay().setCurrent(a);
+            this.getDisplay().setCurrent(a);
         }
     }
     
     public HPIClientProtocol getHPIClientProtocol() {
         return this.clientProtocol;
+    }
+    
+    public LoginResponse getLoginResponse() {
+        return this.loginResponse;
     }
 }
