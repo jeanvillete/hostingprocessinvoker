@@ -18,8 +18,6 @@ public class HPIMidClient extends MIDlet implements CommandListener {
     private Command exitCommand;
     private Command itemCommand;
     private Form form;
-    
-
     private TextField serverAddress, portNumber, user, password;
 
     public TextField getPassword() {
