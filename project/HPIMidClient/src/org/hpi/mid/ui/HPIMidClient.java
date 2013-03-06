@@ -64,7 +64,7 @@ public class HPIMidClient extends MIDlet implements CommandListener {
      * <code>startMIDlet</code> method.
      */
     private void initialize() {                                         
-                                           
+        HPIUiAlert.start(this.getDisplay());
     }                            
 
     /**

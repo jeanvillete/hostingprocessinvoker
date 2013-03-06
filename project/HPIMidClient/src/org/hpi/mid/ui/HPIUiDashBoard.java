@@ -89,10 +89,7 @@ public class HPIUiDashBoard extends HPICommonUi {
                 throw new RuntimeException(loginResponse.getMessage());
             }
         } catch (Exception e) {
-            Alert a = new Alert("Server Message", e.getMessage(), null, AlertType.ERROR);
-            a.setTimeout(Alert.FOREVER);
-            a.setCommandListener(this.parent);
-            this.getDisplay().setCurrent(a);
+            HPIUiAlert.show("Server Message", e.getMessage(), "Done", this.parent.getForm());
         }
     }
     

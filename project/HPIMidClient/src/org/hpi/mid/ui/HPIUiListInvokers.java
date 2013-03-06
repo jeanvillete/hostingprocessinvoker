@@ -64,15 +64,12 @@ public class HPIUiListInvokers extends HPICommonUi {
                 throw new RuntimeException(listInvokersResponse.getMessage());
             }
         } catch (Exception e) {
-            Alert a = new Alert("Processing Error Message", e.getMessage(), null, AlertType.ERROR);
-            a.setTimeout(Alert.FOREVER);
-            a.setCommandListener(this);
-            this.getDisplay().setCurrent(a);
+            HPIUiAlert.show("Server Message", e.getMessage(), "Done", this.parent.getForm());
         }
     }
     
     public void commandAction(Command c, Displayable d) {
-        if (c == this.cmdBack || c == Alert.DISMISS_COMMAND) {
+        if (c == this.cmdBack) {
             this.getDisplay().setCurrent(this.parent.getForm());
         } else if (c == this.cmdConsultInvoker) {
             new HPIUiConsultInvoker(this);

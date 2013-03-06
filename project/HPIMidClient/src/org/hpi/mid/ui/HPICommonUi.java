@@ -27,9 +27,7 @@ public abstract class HPICommonUi extends Thread implements CommandListener {
         this.display = display;
         
         if (tempMessage != null) {
-            Alert a = new Alert(tempMessage.getTitle(), tempMessage.getText(), null, AlertType.INFO);
-            a.setTimeout(Alert.FOREVER);
-            getDisplay().setCurrent(a);
+            HPIUiAlert.show(tempMessage.getTitle(), tempMessage.getText());
         }
         
         this.start();
