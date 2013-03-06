@@ -37,16 +37,13 @@ public class HPIUiStatusExecuteInvoker extends HPICommonUi {
             
             ExecuteInvokerResponse executeInvokerResponse = hpiClientProtocol.executeInvoker(loginResponse.getSessionId(), this.parent.getInvokerId());
             if (executeInvokerResponse.getStatus().equals(Response.Status.SUCCESS)) {
-                a = new Alert("Execution Invoker Response", executeInvokerResponse.getMessage(), null, AlertType.INFO);
+                HPIUiAlert.show("Execution Invoker Response", executeInvokerResponse.getMessage(), "Ok", this.parent.getForm());
             } else {
-                a = new Alert("Error on execution Invoker", executeInvokerResponse.getMessage(), null, AlertType.ERROR);
+                HPIUiAlert.show("Error on execution Invoker", executeInvokerResponse.getMessage(), "Ok", this.parent.getForm());
             }
         } catch (Exception e) {
-            a = new Alert("Processing Error Message", e.getMessage(), null, AlertType.ERROR);
+            HPIUiAlert.show("Server Message", e.getMessage(), "Done", this.parent.getForm());
         }
-        a.setTimeout(Alert.FOREVER);
-        a.setCommandListener(this);
-        getDisplay().setCurrent(a);
     }
     
     public void commandAction(Command c, Displayable d) {

@@ -34,12 +34,12 @@ public class HPIUiShutdownServer extends HPICommonUi {
             ServerShutdownResponse shutdownResponse = this.parent.getHPIClientProtocol().serverShutdown();
             
             if (shutdownResponse.getStatus().equals(Response.Status.SUCCESS)) {
-                a = new Alert("Shutdown Server Message", shutdownResponse.getMessage(), null, AlertType.INFO);
+                HPIUiAlert.show("Shutdown Server Message", shutdownResponse.getMessage(), "Ok", this.parent.getForm());
             } else {
-                a = new Alert("Server Message", shutdownResponse.getMessage(), null, AlertType.ERROR);
+                HPIUiAlert.show("Server Message", shutdownResponse.getMessage(), "Ok", this.parent.getForm());
             }
         } catch (Exception e) {
-            a = new Alert("Processing Error Message", e.getMessage(), null, AlertType.ERROR);
+            HPIUiAlert.show("Processing Error Message", e.getMessage(), "Back", this.parent.getForm());
         }
         a.setTimeout(Alert.FOREVER);
         a.setCommandListener(this);
@@ -47,9 +47,6 @@ public class HPIUiShutdownServer extends HPICommonUi {
     }
     
     public void commandAction(Command c, Displayable d) {
-        if (c == Alert.DISMISS_COMMAND) {
-            this.getDisplay().setCurrent(this.parent.getForm());
-        }
     }
     
 }
